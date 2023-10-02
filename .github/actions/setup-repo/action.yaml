@@ -1,0 +1,29 @@
+name: 'Setup Repo Action'
+description: 'A reusable composite action that setups rust and other common tasks'
+inputs:
+  toolchain:
+    description: 'Nightly parameter for rust-toolchain'
+    required: false
+    default: 'stable'
+  targets:
+    description: 'Target parameter for rust-toolchain'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install nightly
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: ${{ inputs.toolchain }}
+        targets: ${{ inputs.targets }}
+        components: "rustfmt,clippy,cargo,llvm-tools-preview"
+    - uses: Swatinem/rust-cache@v2
+      with:
+        cache-on-failure: true
+    - name: Install cargo-make
+      uses: actions-rs/cargo@v1
+      with:
+        command: install
+        args: --debug cargo-make
