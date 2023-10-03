@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/*"]
+members = ["crates/*", "crates/smart-contracts/meta"]
 resolver = "2"
 
 [workspace.dependencies]
