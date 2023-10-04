@@ -4,7 +4,7 @@ inputs:
   toolchain:
     description: 'Nightly parameter for rust-toolchain'
     required: false
-    default: 'stable'
+    default: 'nightly-2023-10-04'
   targets:
     description: 'Target parameter for rust-toolchain'
     required: false

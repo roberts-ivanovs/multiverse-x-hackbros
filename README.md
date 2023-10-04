@@ -2,6 +2,18 @@
 
 ## Development setup
 
+### Frontend
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run the webserver
+nx serve frontend
+
+# Run the typecheck
+nx typecheck frontend
+```
 ### Backend
 ```bash
 cargo install cargo-make
@@ -22,15 +34,20 @@ cargo make local-ci
 cargo make fmt
 ```
 
-### Frontend
-
+### CLI
 ```bash
-# Install dependencies
-pnpm install
+## Install the MultiversX python cli sdk.
+python3 mxpy-up.py
 
-# Run the webserver
-nx serve frontend
+# Create a wallet
+mxpy wallet new --format pem --outfile wallet.pem
 
-# Run the typecheck
-nx typecheck frontend
+# Compile the smart contracts
+mxpy contract build
+
+# Set-up local network
+mkdir localnet && cd localnet
+mxpy localnet setup
+mxpy localnet start
 ```
+
