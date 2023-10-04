@@ -25,3 +25,4 @@ tracing-subscriber = { version = "0.3", features = [
   "valuable",
   "tracing",
 ] }
+ibc-proto = "0.36.1"
