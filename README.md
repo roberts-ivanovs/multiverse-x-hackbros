@@ -2,6 +2,19 @@
 
 ## Development setup
 
+### Frontend
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run the webserver
+nx serve frontend
+
+# Run the typecheck
+nx typecheck frontend
+```
+### Backend
 ```bash
 cargo install cargo-make
 cargo make
@@ -21,8 +34,8 @@ cargo make local-ci
 cargo make fmt
 ```
 
+### CLI
 ```bash
-
 ## Install the MultiversX python cli sdk.
 python3 mxpy-up.py
 
@@ -37,3 +50,4 @@ mkdir localnet && cd localnet
 mxpy localnet setup
 mxpy localnet start
 ```
+
