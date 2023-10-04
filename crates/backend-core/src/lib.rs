@@ -5,7 +5,7 @@ mod state;
 
 use std::net::{SocketAddr, TcpListener};
 
-use axum::{routing::get, Router};
+use axum::{routing::get, routing::post, Router};
 pub use configuration::Configuration;
 use state::WebAppState;
 
@@ -32,7 +32,8 @@ impl Service {
         let address = self.local_addr().unwrap();
         tracing::info!(address =? address, "Starting service");
         let app = Router::new()
-            .route("/health", get(handlers::health::index))
+            .route("/health", get(handlers::bridge_token::index))
+            .route("/transfer", post(handlers::bridge_token::transfer))
             .with_state(self.state);
 
         let server = axum::Server::from_tcp(self.web_listener)
