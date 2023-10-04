@@ -2,6 +2,7 @@
 
 ## Development setup
 
+### Backend
 ```bash
 cargo install cargo-make
 cargo make
@@ -19,4 +20,17 @@ cargo make local-ci
 
 # Format the code
 cargo make fmt
+```
+
+### Frontend
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run the webserver
+nx serve frontend
+
+# Run the typecheck
+nx typecheck frontend
 ```
