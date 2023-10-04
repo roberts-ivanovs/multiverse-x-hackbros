@@ -25,5 +25,6 @@ tracing-subscriber = { version = "0.3", features = [
   "valuable",
   "tracing",
 ] }
-ibc-proto = "0.36.1"
+ibc-proto = "0.37"
 num-bigint = "0.4"
+multiversx-sdk = "0.2"

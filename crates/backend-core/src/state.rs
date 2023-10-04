@@ -1,6 +1,9 @@
 use axum::extract::FromRef;
+use multiversx_sdk::{wallet::Wallet, blockchain::CommunicationProxy};
+use redact::Secret;
 
 #[derive(Debug, Clone, FromRef)]
 pub(crate) struct WebAppState {
-    // TODO shared state goes here
+    pub(crate) wallet: Secret<Wallet>,
+    pub(crate) rpc: CommunicationProxy,
 }
