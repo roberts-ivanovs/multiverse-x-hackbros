@@ -1,10 +1,12 @@
-use axum::{debug_handler, Json};
+use std::sync::Arc;
+
+use axum::{debug_handler, extract::State, Json};
 use ibc_proto::ibc::applications::transfer::v2::FungibleTokenPacketData;
 use num_bigint::{BigUint, ToBigUint};
 use serde::Deserialize;
 use serde_json::{json, Value};
 
-use crate::error::AppError;
+use crate::{error::AppError, state::WebAppState};
 
 #[debug_handler]
 #[tracing::instrument(err)]
@@ -15,6 +17,7 @@ pub async fn index() -> Result<Json<Value>, AppError> {
 }
 
 pub async fn transfer(
+    State(_state): State<Arc<WebAppState>>,
     Json(payload): Json<CreateTokenTransferPayload>,
 ) -> Result<Json<Value>, AppError> {
     // Validate the amount field

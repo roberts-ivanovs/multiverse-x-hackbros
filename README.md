@@ -43,7 +43,7 @@ python3 mxpy-up.py
 mxpy wallet new --format pem --outfile wallet.pem
 
 # Compile the smart contracts
-mxpy contract build
+cd crates/smart-contracts && mxpy contract build
 
 # Set-up local network
 mkdir localnet && cd localnet

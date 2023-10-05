@@ -15,3 +15,5 @@ ibc-proto.workspace = true
 serde.workspace = true
 num-bigint.workspace = true
 multiversx-sdk.workspace = true
+
+vault = {path = "../smart-contracts"}

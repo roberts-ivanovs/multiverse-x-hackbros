@@ -1,11 +1,11 @@
 {
     "buildInfo": {
         "rustc": {
-            "version": "1.71.0-nightly",
-            "commitHash": "a2b1646c597329d0a25efa3889b66650f65de1de",
-            "commitDate": "2023-05-25",
+            "version": "1.75.0-nightly",
+            "commitHash": "187b8131d4f760f856b214fce34534903276f2ef",
+            "commitDate": "2023-10-03",
             "channel": "Nightly",
-            "short": "rustc 1.71.0-nightly (a2b1646c5 2023-05-25)"
+            "short": "rustc 1.75.0-nightly (187b8131d 2023-10-03)"
         },
         "contractCrate": {
             "name": "vault",
@@ -16,9 +16,6 @@
             "version": "0.43.4"
         }
     },
-    "docs": [
-        "An empty contract. To be used as a template when starting a new contract from scratch."
-    ],
     "name": "VaultContract",
     "constructor": {
         "inputs": [
