@@ -55,5 +55,5 @@ xsuite request-xegld --wallet wallet.json
 pnpm build
 
 # Deploy the contract on devnet
-pnpm run interact:devnet deploy
+pnpm interact:devnet deploy
 ```
