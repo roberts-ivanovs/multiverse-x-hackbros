@@ -51,6 +51,8 @@ xsuite new-wallet --wallet wallet.json
 # Fund wallet with eGld
 xsuite request-xegld --wallet wallet.json
 
+# Install dependencies
+pnpm install
 # Compile the vault smart contract
 pnpm build
 

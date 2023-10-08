@@ -5,10 +5,9 @@ skip_core_tasks = true
 [env]
 CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 SERVE_ADDR = "0.0.0.0:3333"
-SMART_CONTRACT_ADDRESS = "erd1qqqqqqqqqqqqqpgqhn3ae8dpc957t7jadn7kywtg503dy7pnj9ts3umqxx"
-MULTIVERS_X_GATEWAY = "http://127.0.0.1:7950"
+MULTIVERS_X_GATEWAY = "https://devnet-gateway.multiversx.com"
 MULTIVERS_X_PRIVATE_KEY = "1648ad209d6b157a289884933e3bb30f161ec7113221ec16f87c3578b05830b0"
-MULTIVERS_X_SMART_CONTRACT_ADDRESS = "erd1qqqqqqqqqqqqqpgqhn3ae8dpc957t7jadn7kywtg503dy7pnj9ts3umqxx"
+MULTIVERS_X_SMART_CONTRACT_ADDRESS = "erd1tz8std5xme40hmflv8fr5kpntvdk7r97rylgnpavnfp5mgjgh9kqsqjhmp"
 
 [tasks.build]
 workspace = false
