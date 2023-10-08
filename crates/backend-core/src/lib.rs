@@ -32,6 +32,7 @@ impl Service {
             ),
             storage_fs_path: configuration.persistent_storage_path,
             persistent_data: Arc::new(tokio::sync::RwLock::new(storage_data)),
+            gateway: configuration.multivers_x_gateway.clone(),
             rpc: CommunicationProxy::new(configuration.multivers_x_gateway),
             smart_contract_address: configuration.multivers_x_smart_contract_address,
         };

@@ -11,6 +11,7 @@ use crate::storage_layer::StorageData;
 pub(crate) struct WebAppState {
     pub(crate) wallet: Secret<Wallet>,
     pub(crate) rpc: CommunicationProxy,
+    pub(crate) gateway: String,
     pub(crate) smart_contract_address: Address,
     pub(crate) persistent_data: Arc<RwLock<StorageData>>,
     pub(crate) storage_fs_path: PathBuf,

@@ -2,6 +2,7 @@
 
 use std::sync::Arc;
 
+use contract::{Contract, ContractObj, contract_obj, ContractBuilder};
 use multiversx_sdk::data::vm::VmValueRequest;
 use num_bigint::BigUint;
 
@@ -61,6 +62,12 @@ async fn get_deployment_block(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
         caller,
         value: "0".to_string(),
     };
+    // use multiversx_sc::api::VMApi;
+    // use multiversx_sc::contract_base::CallableContractBuilder;
+
+    // let obj = contract_obj();
+    // let a = ContractBuilder.new_contract_obj();
+
     let result = app.rpc.execute_vmquery(&req).await?;
     let result = general_purpose::STANDARD_NO_PAD.decode(&result.data.return_message)?;
 
