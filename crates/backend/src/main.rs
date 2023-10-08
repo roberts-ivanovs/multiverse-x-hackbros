@@ -12,8 +12,10 @@ async fn main() {
     let multivers_x_gateway = env_var("MULTIVERS_X_GATEWAY");
     let multivers_x_private_key = env_var("MULTIVERS_X_PRIVATE_KEY");
     let multivers_x_smart_contract_address = env_var("MULTIVERS_X_SMART_CONTRACT_ADDRESS");
+    let persistent_storage_path = env_var("STORAGE_PATH");
 
     Service::prepare(Configuration {
+        persistent_storage_path: persistent_storage_path.into(),
         serve_addr: serve_addr
             .parse()
             .expect("SERVE_ADDR must be a valid address"),

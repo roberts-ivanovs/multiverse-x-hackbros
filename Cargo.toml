@@ -28,3 +28,4 @@ tracing-subscriber = { version = "0.3", features = [
 ibc-proto = "0.37"
 num-bigint = "0.4"
 multiversx-sdk = "0.2"
+base64 = "0.21"

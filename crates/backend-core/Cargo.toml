@@ -15,5 +15,8 @@ ibc-proto.workspace = true
 serde.workspace = true
 num-bigint.workspace = true
 multiversx-sdk.workspace = true
+base64.workspace = true
 
 contract = {path = "../bridge-contract"}
+
+anyhow = "1"

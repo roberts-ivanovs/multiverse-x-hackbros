@@ -3,6 +3,7 @@ mod error;
 mod handlers;
 mod mtx;
 mod state;
+mod storage_layer;
 
 use std::{
     net::{SocketAddr, TcpListener},
@@ -23,11 +24,14 @@ pub struct Service {
 impl Service {
     pub async fn prepare(configuration: Configuration) -> Self {
         // Define app
+        let storage_data = storage_layer::StorageData::read_from_disk(&configuration.persistent_storage_path);
         let state = WebAppState {
             wallet: Secret::new(
                 Wallet::from_private_key(configuration.multivers_x_private_key.expose_secret())
                     .unwrap(),
             ),
+            storage_fs_path: configuration.persistent_storage_path,
+            persistent_data: Arc::new(tokio::sync::RwLock::new(storage_data)),
             rpc: CommunicationProxy::new(configuration.multivers_x_gateway),
             smart_contract_address: configuration.multivers_x_smart_contract_address,
         };
