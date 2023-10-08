@@ -43,7 +43,7 @@ cargo make fmt
 pnpm install -g xsuite
 
 # Cd into the contracts folder
-cd crates/vault-contract
+cd crates/bridge-contract
 
 # Create a wallet
 xsuite new-wallet --wallet wallet.json
@@ -57,3 +57,5 @@ pnpm build
 # Deploy the contract on devnet
 pnpm interact:devnet deploy
 ```
+
+Simple set value smart contract deployed on devnet at this address `erd1qqqqqqqqqqqqqpgqlul000yk8zufcp7gfsdt573q6syqtcaqrq0q6jdrw6`
