@@ -14,7 +14,9 @@ nx serve frontend
 # Run the typecheck
 nx typecheck frontend
 ```
+
 ### Backend
+
 ```bash
 cargo install cargo-make
 cargo make
@@ -35,19 +37,23 @@ cargo make fmt
 ```
 
 ### CLI
+
 ```bash
-## Install the MultiversX python cli sdk.
-python3 mxpy-up.py
+# Install xSuite globally.
+pnpm install -g xsuite
+
+# Cd into the contracts folder
+cd crates/vault-contract
 
 # Create a wallet
-mxpy wallet new --format pem --outfile wallet.pem
+xsuite new-wallet --wallet wallet.json
 
-# Compile the smart contracts
-cd crates/smart-contracts && mxpy contract build
+# Fund wallet with eGld
+xsuite request-xegld --wallet wallet.json
 
-# Set-up local network
-mkdir localnet && cd localnet
-mxpy localnet setup
-mxpy localnet start
+# Compile the vault smart contract
+pnpm build
+
+# Deploy the contract on devnet
+pnpm run interact:devnet deploy
 ```
-
