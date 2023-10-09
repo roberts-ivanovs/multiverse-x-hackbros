@@ -3,6 +3,7 @@
 use std::sync::Arc;
 
 use contract::{Contract, ContractObj, contract_obj, ContractBuilder};
+use multiversx_sc::types::ContractCall;
 use multiversx_sdk::data::vm::VmValueRequest;
 use num_bigint::BigUint;
 
@@ -52,6 +53,7 @@ async fn react_on_state(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
 
 #[tracing::instrument(skip(app), ret, err)]
 async fn get_deployment_block(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
+    use contract::ProxyTrait as _;
     use base64::{engine::general_purpose, Engine as _};
 
     let caller = app.wallet.expose_secret().address();
@@ -62,11 +64,9 @@ async fn get_deployment_block(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
         caller,
         value: "0".to_string(),
     };
-    // use multiversx_sc::api::VMApi;
-    // use multiversx_sc::contract_base::CallableContractBuilder;
 
-    // let obj = contract_obj();
-    // let a = ContractBuilder.new_contract_obj();
+    // let mut interactor = app.interactor.write().await;
+    // interactor.0.quick_query(app.vault_contract.0.get_value()).await;
 
     let result = app.rpc.execute_vmquery(&req).await?;
     let result = general_purpose::STANDARD_NO_PAD.decode(&result.data.return_message)?;
