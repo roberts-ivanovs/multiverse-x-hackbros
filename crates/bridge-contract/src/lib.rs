@@ -8,13 +8,10 @@ pub trait Contract {
     #[storage_get("value")]
     fn get_value(&self) -> BigUint;
 
-    #[view(getDeploymentBlock)]
-    #[storage_get("deployment_block")]
-    fn get_deployment_block(&self) -> u64;
-
     #[init]
     fn init(&self) {
-        self.set_deployment_block(&self.blockchain().get_block_nonce());
+        self.deployment_block()
+            .set(self.blockchain().get_block_nonce());
     }
 
     #[endpoint(setValue)]
@@ -23,4 +20,8 @@ pub trait Contract {
 
     #[storage_set("deployment_block")]
     fn set_deployment_block(&self, value: &u64);
+
+    #[view(deploymentBlock)]
+    #[storage_mapper("deployment_block")]
+    fn deployment_block(&self) -> SingleValueMapper<u64>;
 }

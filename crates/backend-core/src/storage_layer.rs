@@ -1,27 +1,25 @@
-use std::{sync::Arc, path::PathBuf};
-
-use crate::state::WebAppState;
-
+use std::path::PathBuf;
 
 pub type EventHash = Vec<u8>;
 
 #[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
 pub struct StorageData {
     last_fetched_block: u64,
-    already_parsed_events_on_last_fetched_block: Vec<EventHash>
+    already_parsed_events_on_last_fetched_block: Vec<EventHash>,
 }
 
 impl StorageData {
     pub fn new() -> Self {
         Self {
             last_fetched_block: 0,
-            already_parsed_events_on_last_fetched_block: vec![]
+            already_parsed_events_on_last_fetched_block: vec![],
         }
     }
 
     #[tracing::instrument(skip(self))]
     pub fn add_event_hash(&mut self, event_hash: EventHash) {
-        self.already_parsed_events_on_last_fetched_block.push(event_hash);
+        self.already_parsed_events_on_last_fetched_block
+            .push(event_hash);
     }
 
     pub fn set_last_fetched_block(&mut self, block: u64) {

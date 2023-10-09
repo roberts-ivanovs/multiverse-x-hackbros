@@ -1,11 +1,10 @@
-use std::{
-    ops::Deref,
-    path::{Path, PathBuf},
-    sync::Arc,
-};
+use std::{ops::Deref, path::PathBuf, sync::Arc};
 
 use axum::extract::FromRef;
-use multiversx_sc_snippets::{Interactor, multiversx_sc_scenario::{ContractInfo, DebugApi}};
+use multiversx_sc_snippets::{
+    multiversx_sc_scenario::{api::StaticApi, ContractInfo},
+    Interactor,
+};
 use multiversx_sdk::{blockchain::CommunicationProxy, data::address::Address, wallet::Wallet};
 use redact::Secret;
 use tokio::sync::RwLock;
@@ -21,7 +20,7 @@ pub(crate) struct WebAppState {
     pub(crate) persistent_data: Arc<RwLock<StorageData>>,
     pub(crate) storage_fs_path: PathBuf,
     pub(crate) interactor: Arc<RwLock<WInteractor>>,
-    pub(crate) vault_contract: Arc<WVaultContract>,
+    pub(crate) vault_contract: Arc<RwLock<WVaultContract>>,
 }
 
 pub struct WInteractor(pub Interactor);
@@ -46,7 +45,7 @@ impl Deref for WInteractor {
     }
 }
 pub struct WVaultContract(pub VaultContract);
-pub type VaultContract = ContractInfo<contract::Proxy<DebugApi>>;
+pub type VaultContract = ContractInfo<contract::Proxy<StaticApi>>;
 
 impl std::fmt::Debug for WVaultContract {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

@@ -12,14 +12,11 @@ use std::{
 
 use axum::{routing::get, routing::post, Router};
 pub use configuration::Configuration;
-use contract::Contract;
-use multiversx_sc_snippets::{
-    multiversx_sc_scenario::{ContractInfo, DebugApi},
-    Interactor,
-};
+
+use multiversx_sc_snippets::{multiversx_sc_scenario::scenario_model::AddressKey, Interactor};
 use multiversx_sdk::{blockchain::CommunicationProxy, wallet::Wallet};
 use redact::Secret;
-use state::{WebAppState, WVaultContract, VaultContract};
+use state::{VaultContract, WVaultContract, WebAppState};
 use tokio::sync::RwLock;
 
 use crate::state::WInteractor;
@@ -39,14 +36,20 @@ impl Service {
             Wallet::from_private_key(configuration.multivers_x_private_key.expose_secret())
                 .unwrap(),
         );
-        let contract =
-            VaultContract::new(configuration.multivers_x_smart_contract_address.to_string());
-        let state = WebAppState {
-            wallet: Secret::new(
-                Wallet::from_private_key(configuration.multivers_x_private_key.expose_secret())
-                    .unwrap(),
+
+        let address_key = AddressKey {
+            value: multiversx_sc::types::Address::from_slice(
+                &configuration.multivers_x_smart_contract_address.to_bytes(),
             ),
-            vault_contract: Arc::new(WVaultContract(contract)),
+            original: configuration.multivers_x_smart_contract_address.to_string(),
+        };
+        let contract = VaultContract::new(address_key);
+        let wallet =
+            Wallet::from_private_key(configuration.multivers_x_private_key.expose_secret())
+                .unwrap();
+        let state = WebAppState {
+            wallet: Secret::new(wallet),
+            vault_contract: Arc::new(RwLock::new(WVaultContract(contract))),
             interactor: Arc::new(RwLock::new(WInteractor(interactor))),
             storage_fs_path: configuration.persistent_storage_path,
             persistent_data: Arc::new(tokio::sync::RwLock::new(storage_data)),

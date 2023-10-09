@@ -2,8 +2,9 @@
 
 use std::sync::Arc;
 
-use contract::{Contract, ContractObj, contract_obj, ContractBuilder};
-use multiversx_sc::types::ContractCall;
+use contract::Contract;
+use multiversx_sc::storage::mappers::SingleValue;
+
 use multiversx_sdk::data::vm::VmValueRequest;
 use num_bigint::BigUint;
 
@@ -11,25 +12,15 @@ use crate::state::WebAppState;
 
 pub struct VaultMonitor {}
 
-
 #[derive(Debug)]
 struct Block(pub BigUint);
 
-
-
 pub async fn run(app: Arc<WebAppState>) {
-    let data = app.persistent_data.read().await;
-    let mut _last_fetched_block = if data.last_fetched_block() == 0 {
-        get_deployment_block(&app).await.expect("failed to get deployment block")
-    } else {
-        Block(data.last_fetched_block().into())
-    };
-    drop(data);
-
     loop {
         tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
+        let _ = get_deployment_block(&app).await;
 
-        let reacted = react_on_state(&app).await;
+        // let reacted = react_on_state(&app).await;
     }
 }
 
@@ -46,7 +37,7 @@ async fn react_on_state(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
         value: "0".to_string(),
     };
     let result = app.rpc.execute_vmquery(&req).await?;
-    let result = general_purpose::STANDARD_NO_PAD.decode(&result.data.return_message)?;
+    let result = general_purpose::STANDARD_NO_PAD.decode(result.data.return_message)?;
     let big_uint = BigUint::from_bytes_be(&result);
     Ok(Block(big_uint))
 }
@@ -54,24 +45,20 @@ async fn react_on_state(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
 #[tracing::instrument(skip(app), ret, err)]
 async fn get_deployment_block(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
     use contract::ProxyTrait as _;
-    use base64::{engine::general_purpose, Engine as _};
 
-    let caller = app.wallet.expose_secret().address();
-    let req = VmValueRequest {
-        sc_address: app.smart_contract_address.clone(),
-        func_name: "get_deployment_block".to_string(),
-        args: vec![],
-        caller,
-        value: "0".to_string(),
-    };
+    let mut interactor = app.interactor.write().await;
+    let mut vault_contract = app.vault_contract.write().await;
+    let result: SingleValue<u64> = interactor
+        .0
+        .quick_query(vault_contract.0.deployment_block())
+        .await;
+    let result = result.into();
 
-    // let mut interactor = app.interactor.write().await;
-    // interactor.0.quick_query(app.vault_contract.0.get_value()).await;
-
-    let result = app.rpc.execute_vmquery(&req).await?;
-    let result = general_purpose::STANDARD_NO_PAD.decode(&result.data.return_message)?;
-
+    tracing::info!("deployment block: {:?}", result);
     // TODO parse the result into a Rust struct
-    let big_uint = BigUint::from_bytes_be(&result);
-    Ok(Block(big_uint))
+    // let big_uint = BigUint::from_bytes_be(&result);
+    // Ok(Block(big_uint))
+
+    // todo!()
+    Ok(Block(BigUint::from(result)))
 }

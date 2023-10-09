@@ -21,8 +21,8 @@ multiversx_sc_wasm_adapter::endpoints! {
     (
         init => init
         getValue => get_value
-        getDeploymentBlock => get_deployment_block
         setValue => set_value
+        deploymentBlock => deployment_block
     )
 }
 
