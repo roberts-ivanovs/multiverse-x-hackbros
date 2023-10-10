@@ -28,9 +28,9 @@ impl StorageData {
     }
 
     #[tracing::instrument(ret, err, skip(storage_fs_path))]
-    pub fn write_to_disk(&self, storage_fs_path: &PathBuf) -> eyre::Result<()> {
+    pub async fn write_to_disk(&self, storage_fs_path: &PathBuf) -> eyre::Result<()> {
         let json = serde_json::to_string_pretty(self)?;
-        std::fs::write(storage_fs_path, json)?;
+        tokio::fs::write(storage_fs_path, json).await?;
         Ok(())
     }
 

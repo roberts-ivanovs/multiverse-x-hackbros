@@ -10,7 +10,11 @@ use std::{
     sync::Arc,
 };
 
-use axum::{routing::get, routing::post, Router};
+use axum::{
+    routing::post,
+    routing::{get, patch},
+    Router,
+};
 pub use configuration::Configuration;
 
 use multiversx_sc_snippets::{multiversx_sc_scenario::scenario_model::AddressKey, Interactor};
@@ -72,8 +76,13 @@ impl Service {
         let state = Arc::new(self.state);
         tracing::info!(address =? address, "Starting service");
         let app = Router::new()
-            .route("/health", get(handlers::bridge_token::index))
-            .route("/transfer", post(handlers::bridge_token::transfer))
+            .route("/health", get(handlers::health))
+            .route("/tokens/:user_address", get(handlers::list_all_user_tokens))
+            .route(
+                "/tokens/:user_address",
+                patch(handlers::mint_new_tokens_on_the_other_chain),
+            )
+            .route("/tokens/:user_address", post(handlers::transfer_to_mx))
             .with_state(state.clone());
 
         let server = axum::Server::from_tcp(self.web_listener)

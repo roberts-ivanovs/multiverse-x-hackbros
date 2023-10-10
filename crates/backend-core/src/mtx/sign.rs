@@ -25,10 +25,7 @@ pub async fn sign_tx(app: &WebAppState) {
     interactor.0.sc_call(mutate_state_call).await;
 
     // Read the state
-    let result: SingleValue<u64> = interactor
-        .0
-        .quick_query(vault_contract.0.my_value())
-        .await;
+    let result: SingleValue<u64> = interactor.0.quick_query(vault_contract.0.my_value()).await;
     let result = result.into();
     tracing::info!("my_value: {:?}", result);
 }
