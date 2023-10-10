@@ -5,6 +5,7 @@ use std::sync::Arc;
 use contract::Contract;
 use multiversx_sc::storage::mappers::SingleValue;
 
+use multiversx_sc_snippets::multiversx_sc_scenario::scenario_model::{AddressValue, ScCallStep};
 use multiversx_sdk::data::vm::VmValueRequest;
 use num_bigint::BigUint;
 
@@ -45,13 +46,13 @@ async fn react_on_state(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
 #[tracing::instrument(skip(app), ret, err)]
 async fn get_deployment_block(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
     use contract::ProxyTrait as _;
+    use multiversx_sc_snippets::multiversx_sc_scenario::scenario_model::IntoBlockchainCall;
 
     let mut interactor = app.interactor.write().await;
     let mut vault_contract = app.vault_contract.write().await;
-    let result: SingleValue<u64> = interactor
-        .0
-        .quick_query(vault_contract.0.deployment_block())
-        .await;
+
+    // Read the state
+    let result: SingleValue<u64> = interactor.0.quick_query(vault_contract.0.deployment_block()).await;
     let result = result.into();
 
     tracing::info!("deployment block: {:?}", result);

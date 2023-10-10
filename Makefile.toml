@@ -7,8 +7,8 @@ CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 SERVE_ADDR = "0.0.0.0:3333"
 STORAGE_PATH = "./storage.json"
 MULTIVERS_X_GATEWAY = "https://devnet-gateway.multiversx.com"
-MULTIVERS_X_PRIVATE_KEY = "1648ad209d6b157a289884933e3bb30f161ec7113221ec16f87c3578b05830b0"
-MULTIVERS_X_SMART_CONTRACT_ADDRESS = "erd1qqqqqqqqqqqqqpgq56qtpupq0uak82nna8aec6wpdhnrlxz4h9kqxd023f"
+MULTIVERS_X_PRIVATE_KEY = "977e6db744025e00ed790ce96959a09b32704690801891b6a063c82e1c958110"
+MULTIVERS_X_SMART_CONTRACT_ADDRESS = "erd1qqqqqqqqqqqqqpgq5eg74e7hs0yzgnsvvjp6q9pjwaygqd7nh9kqvvyc5l"
 
 [tasks.build]
 workspace = false
