@@ -12,7 +12,7 @@ use num_bigint::BigInt;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
-use crate::{error::AppError, state::WebAppState};
+use crate::{error::AppError, state::WebAppState, mtx::sign::sign_tx};
 
 #[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
 pub struct TokenDefinition {
@@ -129,10 +129,10 @@ pub struct CreateTokenTransferPayload {
 #[tracing::instrument(err)]
 pub async fn transfer_to_mx(
     Path(_user_address): Path<Address>,
-    State(_state): State<Arc<WebAppState>>,
+    State(state): State<Arc<WebAppState>>,
     Json(payload): Json<CreateTokenTransferPayload>,
 ) -> Result<Json<Value>, AppError> {
-    let token_data = FungibleTokenPacketData {
+    let _token_data = FungibleTokenPacketData {
         denom: payload.token_denom,
         amount: payload.amount,
         sender: payload.sender,
@@ -140,23 +140,7 @@ pub async fn transfer_to_mx(
         memo: payload.description.unwrap_or("".to_string()),
     };
 
-    // TODO: call a service and pass token_data
-    return match process_transfer(&token_data) {
-        Ok(_) => Ok(Json(json!({ "message": "Transfer successful" }))),
-        Err(e) => Err(e),
-    };
+    sign_tx(&state).await?;
 
-    pub fn process_transfer(token_data: &FungibleTokenPacketData) -> Result<(), AppError> {
-        // simulate an error
-        if token_data.receiver == "invalid_receiver" {
-            return Err(AppError::InvalidReceiverAddress);
-        }
-
-        println!(
-            "Transfer: {} tokens from {} to {}",
-            token_data.amount, token_data.sender, token_data.receiver
-        );
-
-        Ok(())
-    }
+    Ok(Json(json!({ "message": "Transfer successful" })))
 }
