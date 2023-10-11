@@ -23,3 +23,4 @@ base64.workspace = true
 contract = {path = "../bridge-contract"}
 
 anyhow = "1"
+serde_with = "3.3"

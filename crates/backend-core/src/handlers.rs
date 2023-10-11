@@ -1,21 +1,25 @@
-use std::sync::Arc;
+use std::{sync::Arc, str::FromStr};
 
-use axum::{debug_handler, extract::{Path, State}, Json};
+use axum::{
+    debug_handler,
+    extract::{Path, State},
+    Json,
+};
 use ibc_proto::ibc::apps::transfer::v2::FungibleTokenPacketData;
 use multiversx_sdk::data::address::Address;
 
+use num_bigint::BigInt;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
 use crate::{error::AppError, state::WebAppState};
 
-#[derive(Debug, Deserialize, Clone, Serialize)]
+#[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
 pub struct TokenDefinition {
     name: String,
     symbol: String,
     decimals: u8,
     address: String,
-    total_supply: String,
     your_balance: String,
 }
 
@@ -27,7 +31,6 @@ static ALL_TOKENS: [TokenDefinition; 4] = [
         symbol: "USDC".to_string(),
         decimals: 18,
         address: "0x1234".to_string(),
-        total_supply: "1000000000000000000000000000".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
     TokenDefinition {
@@ -35,7 +38,6 @@ static ALL_TOKENS: [TokenDefinition; 4] = [
         symbol: "ETH".to_string(),
         decimals: 18,
         address: "0x1234".to_string(),
-        total_supply: "1000000000000000000000000000".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
     TokenDefinition {
@@ -43,7 +45,6 @@ static ALL_TOKENS: [TokenDefinition; 4] = [
         symbol: "EVMOS".to_string(),
         decimals: 18,
         address: "0x1234".to_string(),
-        total_supply: "1000000000000000000000000000".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
     TokenDefinition {
@@ -51,7 +52,6 @@ static ALL_TOKENS: [TokenDefinition; 4] = [
         symbol: "WrappedMX".to_string(),
         decimals: 18,
         address: "0x1234".to_string(),
-        total_supply: "1000000000000000000000000000".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
 ];
@@ -73,20 +73,47 @@ pub struct MintNewTokensPayload {
 #[debug_handler]
 #[tracing::instrument(err)]
 pub async fn mint_new_tokens_on_the_other_chain(
-    Path(_user_address): Path<Address>,
-    State(_state): State<Arc<WebAppState>>,
-    Json(_payload): Json<MintNewTokensPayload>,
+    Path(user_address): Path<Address>,
+    State(state): State<Arc<WebAppState>>,
+    Json(payload): Json<MintNewTokensPayload>,
 ) -> Result<Json<Value>, AppError> {
+    let mut w = state.persistent_data.write().await;
+    let ua = user_address.to_string();
+    match w.balances.get_mut(&ua) {
+        Some(entry) => {
+            let mut token = entry
+                .iter_mut()
+                .find(|t| t.symbol == payload.denom)
+                .ok_or(eyre::eyre!("Invalid token"))?;
+            let amount = BigInt::from_str(&payload.amount).map_err(|_| eyre::eyre!("invalid amount"))?;
+            let token_your_balance = BigInt::from_str(&token.your_balance).map_err(|_| eyre::eyre!("invalid your balance"))?;
+
+            token.your_balance = (token_your_balance + amount).to_string();
+        }
+        None => todo!(),
+    };
     Ok(Json(json!({ "message": "Mint successful" })))
 }
 
 #[debug_handler]
 #[tracing::instrument(err)]
 pub async fn list_all_user_tokens(
-    Path(_user_address): Path<Address>,
-    State(_state): State<Arc<WebAppState>>,
+    Path(user_address): Path<Address>,
+    State(state): State<Arc<WebAppState>>,
 ) -> Result<Json<Vec<TokenDefinition>>, AppError> {
-    Ok(Json(ALL_TOKENS.to_vec()))
+    let mut w = state.persistent_data.write().await;
+    let ua = user_address.to_string();
+    match w.balances.get_mut(&ua) {
+        Some(entry) => {
+            let tokens = entry.clone();
+            Ok(Json(tokens))
+        }
+        None => {
+            let tokens = ALL_TOKENS.to_vec();
+            w.balances.insert(ua, tokens.clone());
+            Ok(Json(tokens))
+        },
+    }
 }
 
 #[derive(Debug, Deserialize)]

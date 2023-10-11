@@ -1,11 +1,18 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, collections::HashMap};
+
+use multiversx_sc::types::Address;
+use serde_with::serde_as;
+use crate::handlers::TokenDefinition;
 
 pub type EventHash = Vec<u8>;
 
+#[serde_as]
 #[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
 pub struct StorageData {
     last_fetched_block: u64,
     already_parsed_events_on_last_fetched_block: Vec<EventHash>,
+    #[serde_as(as = "Vec<(_, _)>")]
+    pub balances: HashMap<String, Vec<TokenDefinition>>,
 }
 
 impl StorageData {
@@ -13,6 +20,7 @@ impl StorageData {
         Self {
             last_fetched_block: 0,
             already_parsed_events_on_last_fetched_block: vec![],
+            balances: HashMap::new(),
         }
     }
 
