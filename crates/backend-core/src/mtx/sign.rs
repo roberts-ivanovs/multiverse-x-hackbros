@@ -3,7 +3,7 @@ use multiversx_sc_snippets::multiversx_sc_scenario::scenario_model::ScCallStep;
 
 use crate::state::WebAppState;
 
-pub async fn sign_tx(app: &WebAppState)  ->  eyre::Result<()> {
+pub async fn sign_tx(app: &WebAppState) -> eyre::Result<()> {
     use contract::ProxyTrait as _;
     use multiversx_sc_snippets::multiversx_sc_scenario::scenario_model::IntoBlockchainCall;
 

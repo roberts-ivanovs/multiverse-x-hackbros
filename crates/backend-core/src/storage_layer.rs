@@ -1,8 +1,7 @@
-use std::{path::PathBuf, collections::HashMap};
+use std::{collections::HashMap, path::PathBuf};
 
-use multiversx_sc::types::Address;
-use serde_with::serde_as;
 use crate::handlers::TokenDefinition;
+use serde_with::serde_as;
 
 pub type EventHash = Vec<u8>;
 
@@ -30,7 +29,7 @@ impl StorageData {
             .push(event_hash);
     }
 
-    pub fn set_last_fetched_block(&mut self, block: u64) {
+    pub fn set_last_parsed_block(&mut self, block: u64) {
         self.last_fetched_block = block;
         self.already_parsed_events_on_last_fetched_block.clear();
     }
@@ -49,7 +48,7 @@ impl StorageData {
         data
     }
 
-    pub fn last_fetched_block(&self) -> u64 {
+    pub fn last_parsed_block(&self) -> u64 {
         self.last_fetched_block
     }
 

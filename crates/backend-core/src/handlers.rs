@@ -1,4 +1,4 @@
-use std::{sync::Arc, str::FromStr};
+use std::{str::FromStr, sync::Arc};
 
 use axum::{
     debug_handler,
@@ -12,15 +12,17 @@ use num_bigint::BigInt;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
-use crate::{error::AppError, state::WebAppState, mtx::sign::sign_tx};
+use crate::{error::AppError, mtx::sign::sign_tx, state::WebAppState};
 
+#[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
+pub struct Symbol(pub String);
 #[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
 pub struct TokenDefinition {
-    name: String,
-    symbol: String,
-    decimals: u8,
-    address: String,
-    your_balance: String,
+    pub name: String,
+    pub symbol: Symbol,
+    pub decimals: u8,
+    pub address: String,
+    pub your_balance: String,
 }
 
 /// Tokens for USDC, ETH, EVMOS, and MX
@@ -28,28 +30,28 @@ pub struct TokenDefinition {
 static ALL_TOKENS: [TokenDefinition; 4] = [
     TokenDefinition {
         name: "USDC".to_string(),
-        symbol: "USDC".to_string(),
+        symbol: Symbol("USDC".to_string()),
         decimals: 18,
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
     TokenDefinition {
         name: "ETH".to_string(),
-        symbol: "ETH".to_string(),
+        symbol: Symbol("ETH".to_string()),
         decimals: 18,
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
     TokenDefinition {
         name: "EVMOS".to_string(),
-        symbol: "EVMOS".to_string(),
+        symbol: Symbol("EVMOS".to_string()),
         decimals: 18,
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
     TokenDefinition {
         name: "WrappedMX".to_string(),
-        symbol: "WrappedMX".to_string(),
+        symbol: Symbol("WrappedMX".to_string()),
         decimals: 18,
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
@@ -67,7 +69,7 @@ pub async fn health() -> Result<Json<Value>, AppError> {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub struct MintNewTokensPayload {
     amount: String,
-    denom: String,
+    denom: Symbol,
 }
 
 #[debug_handler]
@@ -81,12 +83,14 @@ pub async fn mint_new_tokens_on_the_other_chain(
     let ua = user_address.to_string();
     match w.balances.get_mut(&ua) {
         Some(entry) => {
-            let mut token = entry
+            let token = entry
                 .iter_mut()
                 .find(|t| t.symbol == payload.denom)
                 .ok_or(eyre::eyre!("Invalid token"))?;
-            let amount = BigInt::from_str(&payload.amount).map_err(|_| eyre::eyre!("invalid amount"))?;
-            let token_your_balance = BigInt::from_str(&token.your_balance).map_err(|_| eyre::eyre!("invalid your balance"))?;
+            let amount =
+                BigInt::from_str(&payload.amount).map_err(|_| eyre::eyre!("invalid amount"))?;
+            let token_your_balance = BigInt::from_str(&token.your_balance)
+                .map_err(|_| eyre::eyre!("invalid your balance"))?;
 
             token.your_balance = (token_your_balance + amount).to_string();
         }
@@ -112,7 +116,7 @@ pub async fn list_all_user_tokens(
             let tokens = ALL_TOKENS.to_vec();
             w.balances.insert(ua, tokens.clone());
             Ok(Json(tokens))
-        },
+        }
     }
 }
 
