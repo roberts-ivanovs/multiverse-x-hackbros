@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                            7
+// Endpoints:                           11
 // Async Callback (empty):               1
-// Total number of exported functions:   9
+// Total number of exported functions:  13
 
 #![no_std]
 #![allow(internal_features)]
@@ -20,13 +20,17 @@ multiversx_sc_wasm_adapter::endpoints! {
     contract
     (
         init => init
+        setValue => set_value
+        getMyValue => my_value
         set_my_value => set_my_value
         mint => mint
         burn => burn
         deposit => deposit
-        setValue => set_value
-        getMyValue => my_value
         deploymentBlock => deployment_block
+        getBlockDeposits => block_deposits
+        getDepositAmount => deposit_amount
+        getDepositAddress => deposit_address
+        getDepositTokenId => deposit_token_id
     )
 }
 
