@@ -6,6 +6,7 @@ use axum::{
     Json,
 };
 use ibc_proto::ibc::apps::transfer::v2::FungibleTokenPacketData;
+use multiversx_sc_snippets::multiversx_sc_scenario::api::StaticApi;
 use multiversx_sdk::data::address::Address;
 
 use num_bigint::BigInt;
@@ -16,21 +17,47 @@ use crate::{error::AppError, mtx::sign::sign_tx, state::WebAppState};
 
 #[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 pub struct Symbol(pub String);
-#[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct TokenDefinition {
     pub name: String,
     pub symbol: Symbol,
     pub decimals: u8,
+    pub mx_token_id: TokenId,
     pub address: String,
     pub your_balance: String,
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
+pub struct TokenId(String);
+
+impl TokenId {
+    pub fn new_with_identifier(
+        identifier: multiversx_sc::types::TokenIdentifier<StaticApi>,
+    ) -> Self {
+        Self(identifier.to_string())
+    }
+
+    pub fn new_with_string(identifier: String) -> Self {
+        Self(identifier)
+    }
+
+    pub fn inner(&self) -> &str {
+        &self.0
+    }
+
+    pub fn inner_as_identifier(&self) -> multiversx_sc::types::TokenIdentifier<StaticApi> {
+        let bytes = self.0.as_bytes();
+        multiversx_sc::types::TokenIdentifier::from_esdt_bytes(bytes)
+    }
+}
+
 /// Tokens for USDC, ETH, EVMOS, and MX
 #[static_init::dynamic]
-static ALL_TOKENS: [TokenDefinition; 4] = [
+pub static ALL_TOKENS: [TokenDefinition; 4] = [
     TokenDefinition {
         name: "USDC".to_string(),
         symbol: Symbol("USDC".to_string()),
+        mx_token_id: TokenId::new_with_string("USDC-123456".to_string()),
         decimals: 18,
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
@@ -39,6 +66,7 @@ static ALL_TOKENS: [TokenDefinition; 4] = [
         name: "ETH".to_string(),
         symbol: Symbol("ETH".to_string()),
         decimals: 18,
+        mx_token_id: TokenId::new_with_string("ETH-123456".to_string()),
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
@@ -46,6 +74,7 @@ static ALL_TOKENS: [TokenDefinition; 4] = [
         name: "EVMOS".to_string(),
         symbol: Symbol("EVMOS".to_string()),
         decimals: 18,
+        mx_token_id: TokenId::new_with_string("EVMOS-123456".to_string()),
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
@@ -53,6 +82,7 @@ static ALL_TOKENS: [TokenDefinition; 4] = [
         name: "WrappedMX".to_string(),
         symbol: Symbol("WrappedMX".to_string()),
         decimals: 18,
+        mx_token_id: TokenId::new_with_string("WrappedMX-123456".to_string()),
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },

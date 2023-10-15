@@ -1,11 +1,12 @@
 use std::{str::FromStr, sync::Arc};
 
-use multiversx_sc::storage::mappers::SingleValue;
-use multiversx_sdk::data::address::Address;
+use contract::ProxyTrait;
+use multiversx_sc::{storage::mappers::SingleValue, types::MultiValueEncoded};
+use multiversx_sc_snippets::multiversx_sc_scenario::api::StaticApi;
 
 use num_bigint::BigUint;
 
-use crate::{handlers::Symbol, state::WebAppState, storage_layer::EventHash};
+use crate::{handlers::TokenId, state::WebAppState, storage_layer::EventHash};
 
 #[derive(Debug)]
 struct Block(pub u64);
@@ -80,15 +81,46 @@ async fn react_on_events_in_range(
 }
 
 #[tracing::instrument(skip(app), ret, err)]
-async fn fetch_events(
-    app: &Arc<WebAppState>,
-    last_fetched_block: Block,
-) -> anyhow::Result<Vec<MxOutEvent>> {
-    // TODO fetch events from SC
+async fn fetch_events(app: &Arc<WebAppState>, at_block: Block) -> anyhow::Result<Vec<MxOutEvent>> {
+    use contract::ProxyTrait as _;
 
     let _r = app.interactor.read().await;
-    let mut _vault_contract = app.vault_contract.write().await;
-    Ok(vec![])
+    let mut vault_contract = app.vault_contract.write().await;
+
+    let mut interactor = app.interactor.write().await;
+    let result: MultiValueEncoded<StaticApi, u64> = interactor
+        .0
+        .quick_query(vault_contract.0.block_deposits(at_block.0))
+        .await;
+    let res = result.into_iter().collect::<Vec<_>>();
+
+    let mut new_events = Vec::new();
+    for x in res.iter() {
+        let addresses: SingleValue<multiversx_sc::types::Address> = interactor
+            .0
+            .quick_query(vault_contract.0.deposit_address(x))
+            .await;
+        let amounts: SingleValue<BigUint> = interactor
+            .0
+            .quick_query(vault_contract.0.deposit_amount(x))
+            .await;
+        let token_id: SingleValue<multiversx_sc::types::TokenIdentifier<StaticApi>> = interactor
+            .0
+            .quick_query(vault_contract.0.deposit_token_id(x))
+            .await;
+
+        let token_id: multiversx_sc::types::TokenIdentifier<StaticApi> = token_id.into();
+        let token_id = TokenId::new_with_identifier(token_id);
+
+        new_events.push(MxOutEvent {
+            user: addresses.into(),
+            token: token_id,
+            event_hash: *x,
+            amount: amounts.into(),
+        });
+    }
+
+    Ok(new_events)
 }
 
 #[tracing::instrument(skip(app), ret, err)]
@@ -108,8 +140,10 @@ async fn parse_unique_events(
 async fn update_balance(app: &Arc<WebAppState>, events: Vec<MxOutEvent>) -> anyhow::Result<()> {
     let mut w = app.persistent_data.write().await;
     for event in events {
-        if let Some(balances) = w.balances.get_mut(&event.user.to_string()) {
-            if let Some(x) = balances.iter_mut().find(|x| x.symbol == event.token) {
+        let user = event.user.as_array();
+        let user = multiversx_sdk::data::address::Address::from_bytes(*user).to_string();
+        if let Some(balances) = w.balances.get_mut(&user) {
+            if let Some(x) = balances.iter_mut().find(|x| x.mx_token_id == event.token) {
                 if let Ok(your_balance) = BigUint::from_str(&x.your_balance) {
                     let your_balance = your_balance + event.amount;
                     x.your_balance = your_balance.to_string();
@@ -154,8 +188,8 @@ async fn get_current_block(_app: &Arc<WebAppState>) -> anyhow::Result<Block> {
 
 #[derive(Debug)]
 pub struct MxOutEvent {
-    user: Address,
-    token: Symbol,
+    user: multiversx_sc::types::Address,
+    token: TokenId,
     event_hash: EventHash,
     amount: BigUint,
 }

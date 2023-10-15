@@ -34,7 +34,8 @@ impl Service {
     pub async fn prepare(configuration: Configuration) -> Self {
         // Define app
         let storage_data =
-            storage_layer::StorageData::read_from_disk(&configuration.persistent_storage_path);
+            storage_layer::StorageData::read_from_disk(&configuration.persistent_storage_path)
+                .await;
         let mut interactor = Interactor::new(&configuration.multivers_x_gateway).await;
         interactor.register_wallet(
             Wallet::from_private_key(configuration.multivers_x_private_key.expose_secret())

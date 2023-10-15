@@ -3,7 +3,7 @@ use std::{collections::HashMap, path::PathBuf};
 use crate::handlers::TokenDefinition;
 use serde_with::serde_as;
 
-pub type EventHash = Vec<u8>;
+pub type EventHash = u64;
 
 #[serde_as]
 #[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
@@ -42,9 +42,9 @@ impl StorageData {
     }
 
     #[tracing::instrument(ret, skip(storage_fs_path))]
-    pub fn read_from_disk(storage_fs_path: &PathBuf) -> Self {
+    pub async fn read_from_disk(storage_fs_path: &PathBuf) -> Self {
         let data = fast_read_and_parse(storage_fs_path).unwrap_or_else(|_| Self::new());
-        let _ = data.write_to_disk(storage_fs_path);
+        let _ = data.write_to_disk(storage_fs_path).await;
         data
     }
 

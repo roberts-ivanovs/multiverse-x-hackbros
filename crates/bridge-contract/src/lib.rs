@@ -11,19 +11,8 @@ pub trait Contract {
         self.current_deposit_id().set(0);
     }
 
-    // todo: Remove these endpoints
-    #[view(getMyValue)]
-    #[storage_mapper("my_value")]
-    fn my_value(&self) -> SingleValueMapper<usize>;
-
-    #[endpoint(setMyValue)]
-    fn set_my_value(&self, new_value: usize) {
-        self.my_value().set(new_value);
-    }
-    // end todo
-
     #[endpoint(mint)]
-    fn mint(&self, _token_id: String, _amount: &BigUint, _recipient: &ManagedAddress) {
+    fn mint(&self, _token_id: TokenIdentifier, _amount: &BigUint, _recipient: &ManagedAddress) {
         // self.send().esdt_local_mint(&token_id, 0, &amount);
         // self.send().direct_esdt(&recipient, &token_id, 0, &amount);
     }
