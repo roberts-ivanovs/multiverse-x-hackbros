@@ -94,7 +94,9 @@ pub async fn mint_new_tokens_on_the_other_chain(
 
             token.your_balance = (token_your_balance + amount).to_string();
         }
-        None => todo!(),
+        None => {
+            Err(eyre::eyre!("User not found"))?;
+        }
     };
     Ok(Json(json!({ "message": "Mint successful" })))
 }
@@ -124,27 +126,49 @@ pub async fn list_all_user_tokens(
 pub struct CreateTokenTransferPayload {
     token_denom: String,
     amount: String,
-    sender: String,
-    receiver: String,
-    description: Option<String>,
 }
 
 #[debug_handler]
 #[tracing::instrument(err)]
 pub async fn transfer_to_mx(
-    Path(_user_address): Path<Address>,
-    State(state): State<Arc<WebAppState>>,
+    Path(user_address): Path<Address>,
+    State(app): State<Arc<WebAppState>>,
     Json(payload): Json<CreateTokenTransferPayload>,
 ) -> Result<Json<Value>, AppError> {
-    let _token_data = FungibleTokenPacketData {
+    let token_data = FungibleTokenPacketData {
         denom: payload.token_denom,
         amount: payload.amount,
-        sender: payload.sender,
-        receiver: payload.receiver,
-        memo: payload.description.unwrap_or("".to_string()),
+        sender: app.wallet.expose_secret().address().to_string(),
+        receiver: user_address.to_string(),
+        memo: "".to_string(),
     };
 
-    sign_tx(&state).await?;
+    // TODO deduct the amount from the user's balance
+
+    let mut w = app.persistent_data.write().await;
+    let ua = user_address.to_string();
+    match w.balances.get_mut(&ua) {
+        Some(entry) => {
+            let token = entry
+                .iter_mut()
+                .find(|t| t.symbol.0 == token_data.denom)
+                .ok_or(eyre::eyre!("Invalid token"))?;
+            let amount =
+                BigInt::from_str(&token_data.amount).map_err(|_| eyre::eyre!("invalid amount"))?;
+            let token_your_balance = BigInt::from_str(&token.your_balance)
+                .map_err(|_| eyre::eyre!("invalid your balance"))?;
+
+            let new_balance = token_your_balance
+                .checked_sub(&amount)
+                .ok_or(eyre::eyre!("Insufficient balance"))?;
+            token.your_balance = new_balance.to_string();
+        }
+        None => {
+            Err(eyre::eyre!("User not found"))?;
+        }
+    };
+
+    sign_tx(&app, token_data).await?;
 
     Ok(Json(json!({ "message": "Transfer successful" })))
 }

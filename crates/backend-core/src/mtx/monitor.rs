@@ -1,6 +1,5 @@
-use std::{panic, str::FromStr, sync::Arc};
+use std::{str::FromStr, sync::Arc};
 
-use anyhow::Context;
 use multiversx_sc::storage::mappers::SingleValue;
 use multiversx_sdk::data::address::Address;
 
@@ -8,13 +7,10 @@ use num_bigint::BigUint;
 
 use crate::{handlers::Symbol, state::WebAppState, storage_layer::EventHash};
 
-use super::sign::sign_tx;
-
 #[derive(Debug)]
 struct Block(pub u64);
 
 pub async fn run(app: Arc<WebAppState>) {
-    sign_tx(&app).await.unwrap();
     let mut data = app.persistent_data.write().await;
     let last_parsed_block = if data.last_parsed_block() == 0 {
         get_deployment_block(&app)
@@ -89,7 +85,7 @@ async fn fetch_events(
     last_fetched_block: Block,
 ) -> anyhow::Result<Vec<MxOutEvent>> {
     // TODO fetch events from SC
-    use contract::ProxyTrait as _;
+
     let _r = app.interactor.read().await;
     let mut _vault_contract = app.vault_contract.write().await;
     Ok(vec![])

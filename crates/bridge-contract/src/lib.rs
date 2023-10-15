@@ -23,7 +23,7 @@ pub trait Contract {
     // end todo
 
     #[endpoint(mint)]
-    fn mint(&self, _token_id: &TokenIdentifier, _amount: &BigUint, _recipient: &ManagedAddress) {
+    fn mint(&self, _token_id: String, _amount: &BigUint, _recipient: &ManagedAddress) {
         // self.send().esdt_local_mint(&token_id, 0, &amount);
         // self.send().direct_esdt(&recipient, &token_id, 0, &amount);
     }

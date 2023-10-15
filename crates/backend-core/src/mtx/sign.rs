@@ -1,31 +1,31 @@
-use multiversx_sc::storage::mappers::SingleValue;
-use multiversx_sc_snippets::multiversx_sc_scenario::scenario_model::ScCallStep;
+use std::str::FromStr;
+
+use ibc_proto::ibc::apps::transfer::v2::FungibleTokenPacketData;
+
+use num_bigint::BigUint;
 
 use crate::state::WebAppState;
 
-pub async fn sign_tx(app: &WebAppState) -> eyre::Result<()> {
+#[tracing::instrument(skip(app), ret, err)]
+pub async fn sign_tx(app: &WebAppState, token_data: FungibleTokenPacketData) -> eyre::Result<()> {
     use contract::ProxyTrait as _;
     use multiversx_sc_snippets::multiversx_sc_scenario::scenario_model::IntoBlockchainCall;
 
     let mut interactor = app.interactor.write().await;
     let mut vault_contract = app.vault_contract.write().await;
 
-    // Update the state
-
-    // TODO call the MINT method on the contract!
-    let a =
-        multiversx_sc::types::Address::from_slice(&app.wallet.expose_secret().address().to_bytes());
+    let sender =
+        multiversx_sc::types::Address::from(&app.wallet.expose_secret().address().to_bytes());
+    let receiver =
+        multiversx_sdk::data::address::Address::from_bech32_string(token_data.receiver.as_str())
+            .map_err(|_| eyre::eyre!("invalid receiver address"))?;
+    let amount = BigUint::from_str(token_data.amount.as_str())?;
     let mutate_state_call = vault_contract
         .0
-        .set_my_value(10_usize)
+        .mint(token_data.denom, amount, receiver.to_bytes())
         .into_blockchain_call()
-        .from(&a);
+        .from(&sender);
     interactor.0.sc_call(mutate_state_call).await;
-
-    // Read the state
-    let result: SingleValue<u64> = interactor.0.quick_query(vault_contract.0.my_value()).await;
-    let result = result.into();
-    tracing::info!("my_value: {:?}", result);
 
     Ok(())
 }
