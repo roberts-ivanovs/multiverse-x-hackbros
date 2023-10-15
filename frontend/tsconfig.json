@@ -1,24 +1,27 @@
 {
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", "tailwind.config.ts"],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2020"],
-    "isolatedModules": true,
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "types": [
+      "vite/client",
+      "vite-plugin-svgr/client",
+      "jest",
+      "@testing-library/jest-dom"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "module": "CommonJS",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "target": "ES2020",
-    "strict": true,
-    "allowJs": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./app/*"]
-    },
-    "skipLibCheck": true,
-
-    // Remix takes care of building everything in `remix build`.
-    "noEmit": true
-  }
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": "src"
+  },
+  "include": ["src"]
 }
