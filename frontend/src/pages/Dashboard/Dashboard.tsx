@@ -36,7 +36,7 @@ const WIDGETS: WidgetsType[] = [
 
 export const Dashboard = () => (
   <AuthRedirectWrapper>
-    <div className='flex flex-col gap-6 max-w-3xl w-full'>
+    <div className='flex flex-col w-full max-w-3xl gap-6'>
       {WIDGETS.map((element) => {
         const {
           title,

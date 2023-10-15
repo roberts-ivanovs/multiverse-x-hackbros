@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
-import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useState } from 'react';
 
-import moment from 'moment';
 import { Button } from 'components/Button';
 import { ContractAddress } from 'components/ContractAddress';
 import { Label } from 'components/Label';
@@ -10,8 +9,9 @@ import { OutputContainer, PingPongOutput } from 'components/OutputContainer';
 import { getCountdownSeconds, setTimeRemaining } from 'helpers';
 import { useGetPendingTransactions, useSendPingPongTransaction } from 'hooks';
 import { SessionEnum } from 'localConstants';
+import moment from 'moment';
 import { SignedTransactionType } from 'types';
-import { useGetTimeToPong, useGetPingAmount } from './hooks';
+import { useGetPingAmount, useGetTimeToPong } from './hooks';
 
 export const PingPongAbi = () => {
   const { hasPendingTransactions } = useGetPendingTransactions();
@@ -77,7 +77,7 @@ export const PingPongAbi = () => {
             onClick={onSendPingTransaction}
             data-testid='btnPingAbi'
             data-cy='transactionBtn'
-            className='inline-block rounded-lg px-3 py-2 text-center hover:no-underline my-0 bg-blue-600 text-white hover:bg-blue-700 mr-0 disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed'
+            className='inline-block px-3 py-2 my-0 mr-0 text-center text-white bg-blue-600 rounded-lg hover:no-underline hover:bg-blue-700 disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed'
           >
             <FontAwesomeIcon icon={faArrowUp} className='mr-1' />
             Ping
@@ -88,7 +88,7 @@ export const PingPongAbi = () => {
             data-testid='btnPongAbi'
             data-cy='transactionBtn'
             onClick={onSendPongTransaction}
-            className='inline-block rounded-lg px-3 py-2 text-center hover:no-underline my-0 bg-blue-600 text-white hover:bg-blue-700 mr-0 disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed'
+            className='inline-block px-3 py-2 my-0 mr-0 text-center text-white bg-blue-600 rounded-lg hover:no-underline hover:bg-blue-700 disabled:bg-gray-200 disabled:text-black disabled:cursor-not-allowed'
           >
             <FontAwesomeIcon icon={faArrowDown} className='mr-1' />
             Pong

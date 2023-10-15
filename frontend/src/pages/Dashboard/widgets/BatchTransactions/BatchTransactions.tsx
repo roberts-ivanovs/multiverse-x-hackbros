@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
 import {
-  faPaperPlane,
-  faArrowsRotate
+  faArrowsRotate,
+  faPaperPlane
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useGetBatches } from '@multiversx/sdk-dapp/hooks/transactions/batch/useGetBatches';
@@ -14,6 +13,7 @@ import {
 import { sendTransactions } from 'helpers';
 import { useGetAccountInfo, useGetPendingTransactions } from 'hooks';
 import { SessionEnum } from 'localConstants';
+import { useEffect, useState } from 'react';
 import { SignedTransactionType } from 'types';
 import { useBatchTransactionContext } from 'wrappers';
 import { getBatchTransactions, getSwapAndLockTransactions } from './helpers';
@@ -131,7 +131,7 @@ export const BatchTransactions = () => {
 
   return (
     <div className='flex flex-col gap-6'>
-      <div className='flex flex-col md:flex-row gap-2 items-start'>
+      <div className='flex flex-col items-start gap-2 md:flex-row'>
         <Button
           data-testid='sign-auto-send'
           onClick={signAndAutoSendBatchTransactions}

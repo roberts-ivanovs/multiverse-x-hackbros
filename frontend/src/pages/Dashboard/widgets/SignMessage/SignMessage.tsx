@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import type { MouseEvent } from 'react';
 import {
-  faFileSignature,
+  faArrowsRotate,
   faBroom,
-  faArrowsRotate
+  faFileSignature
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useGetSignMessageSession } from '@multiversx/sdk-dapp/hooks/signMessage/useGetSignMessageSession';
 import { Button } from 'components/Button';
 import { OutputContainer } from 'components/OutputContainer';
 import { useGetLastSignedMessageSession, useSignMessage } from 'hooks';
+import type { MouseEvent } from 'react';
+import { useState } from 'react';
 import { SignedMessageStatusesEnum } from 'types';
 import { SignFailure, SignSuccess } from './components';
 
@@ -57,7 +57,7 @@ export const SignMessage = () => {
 
   return (
     <div className='flex flex-col gap-6'>
-      <div className='flex flex gap-2 items-start'>
+      <div className='flex items-start gap-2'>
         <Button
           data-testid='signMsgBtn'
           onClick={handleSubmit}
@@ -85,7 +85,7 @@ export const SignMessage = () => {
         {!isSuccess && !isError && (
           <textarea
             placeholder='Write message here'
-            className='resize-none rounded-md w-full h-32 rounded-lg focus:outline-none focus:border-blue-500'
+            className='w-full h-32 rounded-md rounded-lg resize-none focus:outline-none focus:border-blue-500'
             onChange={(event) => setMessage(event.currentTarget.value)}
           />
         )}

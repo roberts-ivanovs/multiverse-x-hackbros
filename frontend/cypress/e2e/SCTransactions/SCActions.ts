@@ -1,6 +1,6 @@
-import { SCTransactionData, scSelectors } from './SCTransactionData';
 import { userData } from '../../assets/globalData';
 import { AssertionEnum } from '../../constants/enums';
+import { scSelectors } from './SCTransactionData';
 // Custom function to make Ping or Pong transactions
 export const scTransaction = (type) => {
   cy.getSelector(type).then((btn) => {
