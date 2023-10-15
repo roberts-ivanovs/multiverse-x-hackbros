@@ -8,8 +8,8 @@ pub type EventHash = Vec<u8>;
 #[serde_as]
 #[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
 pub struct StorageData {
-    last_fetched_block: u64,
-    already_parsed_events_on_last_fetched_block: Vec<EventHash>,
+    last_parsed_block: u64,
+    already_parsed_events_on_last_parsed_block: Vec<EventHash>,
     #[serde_as(as = "Vec<(_, _)>")]
     pub balances: HashMap<String, Vec<TokenDefinition>>,
 }
@@ -17,21 +17,21 @@ pub struct StorageData {
 impl StorageData {
     pub fn new() -> Self {
         Self {
-            last_fetched_block: 0,
-            already_parsed_events_on_last_fetched_block: vec![],
+            last_parsed_block: 0,
+            already_parsed_events_on_last_parsed_block: vec![],
             balances: HashMap::new(),
         }
     }
 
     #[tracing::instrument(skip(self))]
     pub fn add_event_hash(&mut self, event_hash: EventHash) {
-        self.already_parsed_events_on_last_fetched_block
+        self.already_parsed_events_on_last_parsed_block
             .push(event_hash);
     }
 
     pub fn set_last_parsed_block(&mut self, block: u64) {
-        self.last_fetched_block = block;
-        self.already_parsed_events_on_last_fetched_block.clear();
+        self.last_parsed_block = block;
+        self.already_parsed_events_on_last_parsed_block.clear();
     }
 
     #[tracing::instrument(ret, err, skip(storage_fs_path))]
@@ -49,11 +49,11 @@ impl StorageData {
     }
 
     pub fn last_parsed_block(&self) -> u64 {
-        self.last_fetched_block
+        self.last_parsed_block
     }
 
     pub fn contains(&self, x: &EventHash) -> bool {
-        self.already_parsed_events_on_last_fetched_block.contains(x)
+        self.already_parsed_events_on_last_parsed_block.contains(x)
     }
 }
 

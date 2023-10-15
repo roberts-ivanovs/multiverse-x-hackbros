@@ -1,7 +1,6 @@
-// TODO periodically query the vault contract state
+use std::{panic, str::FromStr, sync::Arc};
 
-use std::{str::FromStr, sync::Arc};
-
+use anyhow::Context;
 use multiversx_sc::storage::mappers::SingleValue;
 use multiversx_sdk::data::address::Address;
 
@@ -34,38 +33,62 @@ pub async fn run(app: Arc<WebAppState>) {
     }
 }
 
-#[tracing::instrument(skip(app), ret, err)]
+#[tracing::instrument(skip(app), err)]
 async fn react_on_events(app: &Arc<WebAppState>) -> anyhow::Result<()> {
-    let last_parsed_block = 10_u64;
-    let latest_block = app.rpc.get_latest_hyper_block_nonce(false).await?;
-    for (idx, block) in (last_parsed_block..latest_block).enumerate() {
-        let mut w = app.persistent_data.write().await;
-        w.set_last_parsed_block(block);
-        drop(w);
+    let r = app.persistent_data.read().await;
+    let last_parsed_block = r.last_parsed_block();
+    drop(r);
 
-        let events = fetch_events(app, Block(block)).await?;
-        if events.is_empty() {
-            continue;
-        }
-        let unique_events = parse_unique_events(app, events).await?;
-        if unique_events.is_empty() {
-            continue;
-        }
-        update_balance(app, unique_events).await?;
-        if idx == 5 {
-            return Ok(());
-        }
-    }
+    let latest_block = get_current_block(app).await?.0;
+
+    react_on_events_in_range(last_parsed_block, latest_block, app).await?;
 
     Ok(())
 }
 
-#[tracing::instrument(skip(_app), ret, err)]
+#[tracing::instrument(skip(app), ret, err)]
+async fn react_on_events_in_range(
+    last_parsed_block: u64,
+    latest_block: u64,
+    app: &Arc<WebAppState>,
+) -> Result<(), anyhow::Error> {
+    let mut new_last_parsed_block = last_parsed_block;
+    for (idx, block) in (last_parsed_block..latest_block).enumerate() {
+        if idx == 5 {
+            // Take a break every 5 blocks
+            break;
+        }
+
+        let events = fetch_events(app, Block(block)).await?;
+        if events.is_empty() {
+            new_last_parsed_block = block;
+            continue;
+        }
+        let unique_events = parse_unique_events(app, events).await?;
+        if unique_events.is_empty() {
+            new_last_parsed_block = block;
+            continue;
+        }
+        update_balance(app, unique_events).await?;
+        new_last_parsed_block = block;
+    }
+
+    let mut w = app.persistent_data.write().await;
+    w.set_last_parsed_block(new_last_parsed_block);
+    drop(w);
+
+    return Ok(());
+}
+
+#[tracing::instrument(skip(app), ret, err)]
 async fn fetch_events(
-    _app: &Arc<WebAppState>,
+    app: &Arc<WebAppState>,
     last_fetched_block: Block,
 ) -> anyhow::Result<Vec<MxOutEvent>> {
-    // TODO read from the contract
+    // TODO fetch events from SC
+    use contract::ProxyTrait as _;
+    let _r = app.interactor.read().await;
+    let mut _vault_contract = app.vault_contract.write().await;
     Ok(vec![])
 }
 
@@ -116,6 +139,18 @@ async fn get_deployment_block(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
     let result = result.into();
 
     Ok(Block(result))
+}
+
+#[tracing::instrument(skip(_app), ret, err)]
+async fn get_current_block(_app: &Arc<WebAppState>) -> anyhow::Result<Block> {
+    let mut latest_block = reqwest::get("https://devnet-api.multiversx.com/blocks/latest")
+        .await?
+        .json::<serde_json::Value>()
+        .await?;
+
+    let nonce = latest_block["nonce"].take();
+    let nonce = serde_json::from_value::<u64>(nonce)?;
+    Ok(Block(nonce))
 }
 
 #[derive(Debug)]
