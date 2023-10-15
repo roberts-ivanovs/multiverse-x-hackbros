@@ -4,7 +4,7 @@
     "build": "xsuite build",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "interact:devnet": "CHAIN=devnet tsx interact/index.ts",
+    "interact:devnet": "pnpm build && CHAIN=devnet tsx interact/index.ts",
     "interact:testnet": "CHAIN=testnet tsx interact/index.ts",
     "interact:mainnet": "CHAIN=mainnet tsx interact/index.ts"
   },

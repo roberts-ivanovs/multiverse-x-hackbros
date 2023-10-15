@@ -90,11 +90,21 @@ impl Service {
             .serve(app.into_make_service());
 
         // Start listening for chain events
-        tokio::spawn(async move {
+        let mut monitor_handle = tokio::spawn(async move {
             mtx::monitor::run(state).await;
         });
+        let mut server_handle = tokio::spawn(async move {
+            server.await.unwrap();
+        });
 
-        server.await.unwrap();
+        tokio::select! {
+            _ = &mut server_handle => {
+                monitor_handle.abort();
+            },
+            _ = &mut monitor_handle => {
+                server_handle.abort();
+            },
+        }
     }
 
     pub fn local_addr(&self) -> std::io::Result<SocketAddr> {

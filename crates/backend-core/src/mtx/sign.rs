@@ -15,12 +15,11 @@ pub async fn sign_tx(app: &WebAppState) -> eyre::Result<()> {
     // TODO call the MINT method on the contract!
     let a =
         multiversx_sc::types::Address::from_slice(&app.wallet.expose_secret().address().to_bytes());
-    let mutate_state_call: ScCallStep = vault_contract
+    let mutate_state_call = vault_contract
         .0
         .set_my_value(10_usize)
         .into_blockchain_call()
-        .from(&a)
-        .into();
+        .from(&a);
     interactor.0.sc_call(mutate_state_call).await;
 
     // Read the state

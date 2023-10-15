@@ -12,15 +12,11 @@ pub trait Contract {
     }
 
     // todo: Remove these endpoints
-    #[endpoint(setValue)]
-    #[storage_set("value")]
-    fn set_value(&self, value: &BigUint);
-
     #[view(getMyValue)]
     #[storage_mapper("my_value")]
     fn my_value(&self) -> SingleValueMapper<usize>;
 
-    #[endpoint]
+    #[endpoint(setMyValue)]
     fn set_my_value(&self, new_value: usize) {
         self.my_value().set(new_value);
     }

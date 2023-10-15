@@ -16,7 +16,7 @@ program.command("deploy").action(async () => {
   const wallet = await loadWallet();
   const result = await wallet.deployContract({
     code: data.code,
-    codeMetadata: ["upgradeable"],
+    codeMetadata: ["upgradeable", "readable", "payable", "payableBySc"],
     gasLimit: 20_000_000,
   });
   console.log("Result:", result);

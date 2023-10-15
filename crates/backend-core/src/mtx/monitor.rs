@@ -8,10 +8,13 @@ use num_bigint::BigUint;
 
 use crate::{handlers::Symbol, state::WebAppState, storage_layer::EventHash};
 
+use super::sign::sign_tx;
+
 #[derive(Debug)]
 struct Block(pub u64);
 
 pub async fn run(app: Arc<WebAppState>) {
+    sign_tx(&app).await.unwrap();
     let mut data = app.persistent_data.write().await;
     let last_parsed_block = if data.last_parsed_block() == 0 {
         get_deployment_block(&app)
