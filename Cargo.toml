@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/*", "crates/smart-contracts/meta"]
+members = ["crates/*", "crates/bridge-contract/meta", "crates/bridge-contract"]
 resolver = "2"
 
 [workspace.dependencies]
@@ -27,4 +27,8 @@ tracing-subscriber = { version = "0.3", features = [
 ] }
 ibc-proto = "0.37"
 num-bigint = "0.4"
-multiversx-sdk = "0.2"
+multiversx-sdk = "0"
+base64 = "0.21"
+multiversx-sc = "0.43.4"
+multiversx-sc-snippets = "0.43.4"
+static_init = "1.0"

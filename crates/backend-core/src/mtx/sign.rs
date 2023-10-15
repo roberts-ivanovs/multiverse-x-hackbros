@@ -1,7 +1,41 @@
-use crate::state::WebAppState;
+use std::str::FromStr;
 
-// TODO sign new chain transactions and submit them to the network
-pub async fn sign_tx(state: &WebAppState) {
-    // https://github.com/multiversx/mx-sdk-rs/blob/master/sdk/core/examples/sign_tx.rs
-    // TODO
+use ibc_proto::ibc::apps::transfer::v2::FungibleTokenPacketData;
+
+use num_bigint::BigUint;
+
+use crate::{handlers::ALL_TOKENS, state::WebAppState};
+
+#[tracing::instrument(skip(app), ret, err)]
+pub async fn sign_tx(app: &WebAppState, token_data: FungibleTokenPacketData) -> eyre::Result<()> {
+    use contract::ProxyTrait as _;
+    use multiversx_sc_snippets::multiversx_sc_scenario::scenario_model::IntoBlockchainCall;
+
+    let mut interactor = app.interactor.write().await;
+    let mut vault_contract = app.vault_contract.write().await;
+
+    let sender =
+        multiversx_sc::types::Address::from(&app.wallet.expose_secret().address().to_bytes());
+    let receiver =
+        multiversx_sdk::data::address::Address::from_bech32_string(token_data.receiver.as_str())
+            .map_err(|_| eyre::eyre!("invalid receiver address"))?;
+    let amount = BigUint::from_str(token_data.amount.as_str())?;
+
+    let token = ALL_TOKENS
+        .iter()
+        .find(|x| x.symbol.0 == token_data.denom)
+        .ok_or(eyre::eyre!("invalid token"))?;
+
+    let mutate_state_call = vault_contract
+        .0
+        .mint(
+            token.mx_token_id.inner_as_identifier(),
+            amount,
+            receiver.to_bytes(),
+        )
+        .into_blockchain_call()
+        .from(&sender);
+    interactor.0.sc_call(mutate_state_call).await;
+
+    Ok(())
 }
