@@ -1,0 +1,152 @@
+{
+    "buildInfo": {
+        "rustc": {
+            "version": "1.75.0-nightly",
+            "commitHash": "187b8131d4f760f856b214fce34534903276f2ef",
+            "commitDate": "2023-10-03",
+            "channel": "Nightly",
+            "short": "rustc 1.75.0-nightly (187b8131d 2023-10-03)"
+        },
+        "contractCrate": {
+            "name": "contract",
+            "version": "0.0.0"
+        },
+        "framework": {
+            "name": "multiversx-sc",
+            "version": "0.43.4"
+        }
+    },
+    "name": "Contract",
+    "constructor": {
+        "inputs": [],
+        "outputs": []
+    },
+    "endpoints": [
+        {
+            "name": "mint",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "_token_id",
+                    "type": "TokenIdentifier"
+                },
+                {
+                    "name": "_amount",
+                    "type": "BigUint"
+                },
+                {
+                    "name": "_recipient",
+                    "type": "Address"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "burn",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "_token_id",
+                    "type": "TokenIdentifier"
+                },
+                {
+                    "name": "_amount",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "deposit",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "*"
+            ],
+            "inputs": [
+                {
+                    "name": "token_id",
+                    "type": "TokenIdentifier"
+                },
+                {
+                    "name": "amount",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "deploymentBlock",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "getBlockDeposits",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "block_num",
+                    "type": "u64"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "variadic<u64>",
+                    "multi_result": true
+                }
+            ]
+        },
+        {
+            "name": "getDepositAmount",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "deposit_id",
+                    "type": "u64"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "BigUint"
+                }
+            ]
+        },
+        {
+            "name": "getDepositAddress",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "deposit_id",
+                    "type": "u64"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "Address"
+                }
+            ]
+        },
+        {
+            "name": "getDepositTokenId",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "deposit_id",
+                    "type": "u64"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "TokenIdentifier"
+                }
+            ]
+        }
+    ],
+    "events": [],
+    "hasCallback": false,
+    "types": {}
+}
