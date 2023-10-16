@@ -1,34 +1,18 @@
-import type { PropsWithChildren } from 'react';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { WithClassnameType } from 'types';
+import type { PropsWithChildren, ReactElement } from 'react';
 
-interface CardType extends PropsWithChildren, WithClassnameType {
+interface Props {
+  icon: ReactElement;
   title: string;
-  description?: string;
-  reference: string;
 }
 
-export const Card = (props: CardType) => {
-  const { title, children, description, reference } = props;
-
+export const Card = ({ children, icon, title }: PropsWithChildren<Props>) => {
   return (
-    <div
-      className='flex flex-col flex-1 rounded-xl bg-white p-6 justify-center'
-      data-testid={props['data-testid']}
-    >
-      <h2 className='flex text-xl font-medium group'>
-        {title}
-        <a
-          href={reference}
-          target='_blank'
-          className='hidden group-hover:block ml-2 text-blue-600'
-        >
-          <FontAwesomeIcon icon={faInfoCircle} size='sm' />
-        </a>
-      </h2>
-      {description && <p className='text-gray-400 mb-6'>{description}</p>}
-      {children}
+    <div className='p-5  bg-gray-800 rounded-lg max-w-[300px]'>
+      <div className='flex items-center gap-3 mb-16'>
+        {icon}
+        <p className='text-sm text-white'>{title}</p>
+      </div>
+      <div className='flex flex-col h-full space-between'>{children}</div>
     </div>
   );
 };
