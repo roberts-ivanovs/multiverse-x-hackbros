@@ -10,9 +10,7 @@ export enum ErrorMessagesEnum {
 }
 
 export enum RoutesEnum {
-  unlock = '/unlock',
-  send = '/send',
-  dashboard = '/dashboard'
+  send = '/send'
 }
 
 export enum WalletIDEnum {

@@ -8,7 +8,7 @@ export const PageNotFound = () => {
   return (
     <div className='flex flex-col w-full  max-w-prose h-[calc(100vh-200px)] justify-center items-center'>
       <div className='flex flex-col p-6 items-center justify-center gap-2 rounded-xl bg-[#f6f8fa] w-full'>
-        <FontAwesomeIcon icon={faSearch} className='fa-3x mb-2' />
+        <FontAwesomeIcon icon={faSearch} className='mb-2 fa-3x' />
 
         <div className='flex flex-col items-center'>
           <h4 className='mt-3 text-xl'>Page not found</h4>
