@@ -1,7 +1,7 @@
 {
   "code": "file:output/contract.wasm",
   "address": {
-    "devnet": "",
+    "devnet": "erd1qqqqqqqqqqqqqpgqva4657ut4jakwp6dddqdw2s5m8tretv5rq0q9axefc",
     "testnet": "",
     "mainnet": ""
   }

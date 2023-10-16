@@ -28,7 +28,18 @@ program.command("upgrade").action(async () => {
     callee: envChain.select(data.address),
     code: data.code,
     codeMetadata: ["upgradeable"],
+    gasLimit: 20_000_0000,
+  });
+  console.log("Result:", result);
+});
+
+program.command("issue").action(async () => {
+  const wallet = await loadWallet();
+  const result = await wallet.callContract({
+    callee: envChain.select(data.address),
+    funcName: "issueToken1",
     gasLimit: 20_000_000,
+    value: 5000000000000000,
   });
   console.log("Result:", result);
 });
