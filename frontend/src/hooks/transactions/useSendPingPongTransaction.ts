@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   deleteTransactionToast,
   removeAllSignedTransactions,
@@ -8,6 +7,7 @@ import { contractAddress } from 'config';
 import { refreshAccount, sendTransactions } from 'helpers';
 import { useTrackTransactionStatus } from 'hooks/sdkDappHooks';
 import { SessionEnum } from 'localConstants';
+import { useState } from 'react';
 import { IPlainTransactionObject } from 'types/sdkCoreTypes';
 import { getChainId } from 'utils/getChainId';
 import { smartContract } from 'utils/smartContract';

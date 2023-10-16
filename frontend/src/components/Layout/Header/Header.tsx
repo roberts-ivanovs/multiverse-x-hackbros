@@ -15,13 +15,13 @@ export const Header = () => {
   };
 
   return (
-    <header className='flex flex-row justify-between pt-6 pl-6 pr-6 align-center'>
+    <header className='flex flex-row justify-between px-12 pt-6 align-center'>
       <MxLink
         className='flex items-center gap-5'
         to={isLoggedIn ? RouteNamesEnum.dashboard : RouteNamesEnum.home}
       >
         <MultiversXLogo className='w-full h-6' />
-        <div className='h-full w-[1px] bg-gray-800' />
+        <div className='h-full w-[1px] bg-gray-700' />
         <h1 className='text-lg font-bold text-transparent bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text animate-text'>
           xChains
         </h1>
@@ -34,15 +34,13 @@ export const Header = () => {
             <p className='text-white'>{environment}</p>
           </div>
 
-          {isLoggedIn ? (
+          {isLoggedIn && (
             <Button
               onClick={handleLogout}
               className='inline-block px-3 py-2 mx-0 my-0 text-center text-gray-600 rounded-lg hover:no-underline hover:bg-slate-100'
             >
               Close
             </Button>
-          ) : (
-            <MxLink to={RouteNamesEnum.unlock}>Connect</MxLink>
           )}
         </div>
       </nav>

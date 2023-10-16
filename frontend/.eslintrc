@@ -37,25 +37,6 @@
   ],
   "plugins": ["react-hooks", "prettier", "import"],
   "rules": {
-    "import/order": [
-      "warn",
-      {
-        "groups": ["builtin", "external", "internal"],
-        "pathGroups": [
-          {
-            "pattern": "react",
-            "group": "external",
-            "position": "before"
-          }
-        ],
-        "pathGroupsExcludedImportTypes": ["react"],
-        "newlines-between": "ignore",
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
-      }
-    ],
     "prettier/prettier": [
       "error",
       {
