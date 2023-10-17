@@ -62,3 +62,4 @@ pnpm interact:devnet deploy
 
 Simple set value smart contract deployed on devnet at this address `erd1qqqqqqqqqqqqqpgqlul000yk8zufcp7gfsdt573q6syqtcaqrq0q6jdrw6`
 Deposit smart contract at address `erd1qqqqqqqqqqqqqpgqva4657ut4jakwp6dddqdw2s5m8tretv5rq0q9axefc`
+Deposit with tokens `erd1qqqqqqqqqqqqqpgqutyvtlcs9vrjfgv6p5lnhjexhlxvfxj5rq0qds96p8`
