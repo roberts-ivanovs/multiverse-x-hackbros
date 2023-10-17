@@ -20,8 +20,7 @@ multiversx_sc_wasm_adapter::endpoints! {
     contract
     (
         init => init
-        getMyValue => my_value
-        setMyValue => set_my_value
+        issueToken1 => issue_token1
         mint => mint
         burn => burn
         deposit => deposit
@@ -30,6 +29,7 @@ multiversx_sc_wasm_adapter::endpoints! {
         getDepositAmount => deposit_amount
         getDepositAddress => deposit_address
         getDepositTokenId => deposit_token_id
+        getToken1 => token_1
     )
 }
 
