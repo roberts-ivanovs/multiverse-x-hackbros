@@ -17,7 +17,7 @@ program.command("deploy").action(async () => {
   const result = await wallet.deployContract({
     code: data.code,
     codeMetadata: ["upgradeable", "readable", "payable", "payableBySc"],
-    gasLimit: 20_000_000,
+    gasLimit: 20_000_0000,
   });
   console.log("Result:", result);
 });
@@ -38,8 +38,18 @@ program.command("issue").action(async () => {
   const result = await wallet.callContract({
     callee: envChain.select(data.address),
     funcName: "issueToken1",
-    gasLimit: 20_000_000,
-    value: 5000000000000000,
+    gasLimit: 20_000_0000,
+    value: 50_000_000_000_000_000,
+  });
+  console.log("Result:", result);
+});
+
+program.command("getToken").action(async () => {
+  const wallet = await loadWallet();
+  const result = await wallet.callContract({
+    callee: envChain.select(data.address),
+    funcName: "getToken1",
+    gasLimit: 20_000_0000,
   });
   console.log("Result:", result);
 });

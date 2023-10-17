@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                           12
+// Endpoints:                           10
 // Async Callback (empty):               1
-// Total number of exported functions:  14
+// Total number of exported functions:  12
 
 #![no_std]
 #![allow(internal_features)]
@@ -20,8 +20,6 @@ multiversx_sc_wasm_adapter::endpoints! {
     contract
     (
         init => init
-        getMyValue => my_value
-        setMyValue => set_my_value
         issueToken1 => issue_token1
         mint => mint
         burn => burn

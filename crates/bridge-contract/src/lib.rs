@@ -12,8 +12,9 @@ pub trait Contract {
     }
 
     #[endpoint(issueToken1)]
+    #[payable("EGLD")]
     fn issue_token1(&self) {
-        let issue_cost: u128 = 5000000000000000;
+        let issue_cost: u128 = 50_000_000_000_000_000;
         let token_display_name = ManagedBuffer::from("Token");
         let token_ticker = ManagedBuffer::from("TOK");
         self.token_1().issue_and_set_all_roles(BigUint::from(issue_cost), token_display_name, token_ticker, 18, None);
@@ -70,7 +71,7 @@ pub trait Contract {
 
     #[storage_mapper("current_deposit_id")]
     fn current_deposit_id(&self) -> SingleValueMapper<u64>;
-
+    
     #[view(getToken1)]
     #[storage_mapper("token_1")]
     fn token_1(&self) -> FungibleTokenMapper;
