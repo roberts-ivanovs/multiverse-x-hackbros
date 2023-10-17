@@ -15,9 +15,36 @@ pub trait Contract {
     #[payable("EGLD")]
     fn issue_token1(&self) {
         let issue_cost: u128 = 50_000_000_000_000_000;
-        let token_display_name = ManagedBuffer::from("Token");
-        let token_ticker = ManagedBuffer::from("TOK");
+        let token_display_name = ManagedBuffer::from("USDCoin");
+        let token_ticker = ManagedBuffer::from("USDC");
         self.token_1().issue_and_set_all_roles(BigUint::from(issue_cost), token_display_name, token_ticker, 18, None);
+    }
+
+    #[endpoint(issueToken2)]
+    #[payable("EGLD")]
+    fn issue_token2(&self) {
+        let issue_cost: u128 = 50_000_000_000_000_000;
+        let token_display_name = ManagedBuffer::from("Ethereum");
+        let token_ticker = ManagedBuffer::from("ETH");
+        self.token_2().issue_and_set_all_roles(BigUint::from(issue_cost), token_display_name, token_ticker, 18, None);
+    }
+
+    #[endpoint(issueToken3)]
+    #[payable("EGLD")]
+    fn issue_token3(&self) {
+        let issue_cost: u128 = 50_000_000_000_000_000;
+        let token_display_name = ManagedBuffer::from("EVMOS");
+        let token_ticker = ManagedBuffer::from("EVMOS");
+        self.token_3().issue_and_set_all_roles(BigUint::from(issue_cost), token_display_name, token_ticker, 18, None);
+    }
+
+    #[endpoint(issueToken4)]
+    #[payable("EGLD")]
+    fn issue_token4(&self) {
+        let issue_cost: u128 = 50_000_000_000_000_000;
+        let token_display_name = ManagedBuffer::from("WrappedEGLD");
+        let token_ticker = ManagedBuffer::from("WEGLD");
+        self.token_4().issue_and_set_all_roles(BigUint::from(issue_cost), token_display_name, token_ticker, 18, None);
     }
 
     #[endpoint(mint)]
@@ -49,6 +76,16 @@ pub trait Contract {
         self.current_deposit_id().set(&deposit_id + 1);
     }
 
+    #[view(getTokenIds)]
+    fn get_token_ids(&self) -> ManagedVec<TokenIdentifier> {
+        let mut token_ids = ManagedVec::new();
+        token_ids.push(self.token_1().get_token_id());
+        token_ids.push(self.token_2().get_token_id());
+        token_ids.push(self.token_3().get_token_id());
+        token_ids.push(self.token_4().get_token_id());
+        token_ids
+    }
+
     #[view(deploymentBlock)]
     #[storage_mapper("deployment_block")]
     fn deployment_block(&self) -> SingleValueMapper<u64>;
@@ -72,7 +109,15 @@ pub trait Contract {
     #[storage_mapper("current_deposit_id")]
     fn current_deposit_id(&self) -> SingleValueMapper<u64>;
     
-    #[view(getToken1)]
     #[storage_mapper("token_1")]
     fn token_1(&self) -> FungibleTokenMapper;
+
+    #[storage_mapper("token_2")]
+    fn token_2(&self) -> FungibleTokenMapper;
+
+    #[storage_mapper("token_3")]
+    fn token_3(&self) -> FungibleTokenMapper;
+
+    #[storage_mapper("token_4")]
+    fn token_4(&self) -> FungibleTokenMapper;
 }
