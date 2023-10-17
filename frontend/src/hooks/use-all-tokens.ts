@@ -1,8 +1,16 @@
 import { host } from '@/utils/host';
 import axios from 'axios';
-import { useQuery } from 'react-query';
+import { UseQueryResult, useQuery } from 'react-query';
 
-export function useAllTokens(userAddress: string) {
+export function useAllTokens(userAddress: string): UseQueryResult<
+  {
+    name: string;
+    decimals: number;
+    your_balance: string;
+    symbol: string;
+    mx_token_id: string;
+  }[]
+> {
   return useQuery(
     ['tokens'],
     async () => {

@@ -75,7 +75,7 @@ export function MultiversXCard() {
       {isLoggedIn ? (
         <button
           onClick={handleLogout}
-          className='w-full py-2 text-sm text-black rounded-md bg-accent-100'
+          className='w-full py-2 text-sm font-bold text-black rounded-md bg-accent-100'
         >
           Disconnect
         </button>
