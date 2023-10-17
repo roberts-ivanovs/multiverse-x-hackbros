@@ -12,13 +12,13 @@ interface MtxTokenSearchQuery {
 }
 
 export const getMtxTokens = async (
-  address: Address,
+  address: string,
   query?: MtxTokenSearchQuery
 ) => {
   // TODO: extract to config
-  let url = `https://devnet-api.multiversx.com/accounts/${address.toString()}/tokens`;
+  let url = `https://devnet-api.multiversx.com/accounts/${address}/tokens`;
 
-  if (typeof query !== undefined) {
+  if (query !== undefined) {
     url += '?';
     url += `from=${query?.from}&`;
     url += `size=${query?.size}&`;
@@ -36,6 +36,6 @@ export const getMtxTokens = async (
   });
 
   console.log(`Retrieving multiversx tokens - status: ${response.status}`);
-  console.log(`Retrieving multiversx tokens - data: ${response.data}`);
+  console.log(`Retrieving multiversx tokens - token count: ${JSON.stringify(response.data)}`);
   return response.data;
 };

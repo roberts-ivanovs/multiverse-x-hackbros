@@ -21,10 +21,16 @@ export const depositOnCustomContract = async (
         TokenTransfer.fungibleFromAmount(tokenId, amount, numDecimals)
       );
 
-    const txHash = transferCall.buildTransaction().getHash().toString();
-    const tx = await proxy.getTransaction(txHash);
-    return resultsParser.parseOutcome(tx, transferCall.getEndpoint())
-      .firstValue;
+    // const txHash = transferCall.buildTransaction().getHash().toString();
+    // const tx = await proxy.getTransaction(txHash);
+    // const res = resultsParser.parseOutcome(tx, transferCall.getEndpoint())
+    //   .firstValue;
+    
+    // console.log(res);
+    // return res;
+
+    console.log(transferCall);
+    return transferCall
   } catch (err) {
     console.error('Unable to transfer to "deposit"', err);
   }

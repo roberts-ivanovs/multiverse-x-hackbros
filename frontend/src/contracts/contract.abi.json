@@ -13,7 +13,7 @@
         },
         "framework": {
             "name": "multiversx-sc",
-            "version": "0.43.4"
+            "version": "0.43.5"
         }
     },
     "name": "Contract",
@@ -23,19 +23,28 @@
     },
     "endpoints": [
         {
+            "name": "issueToken1",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "EGLD"
+            ],
+            "inputs": [],
+            "outputs": []
+        },
+        {
             "name": "mint",
             "mutability": "mutable",
             "inputs": [
                 {
-                    "name": "_token_id",
+                    "name": "token_id",
                     "type": "TokenIdentifier"
                 },
                 {
-                    "name": "_amount",
+                    "name": "amount",
                     "type": "BigUint"
                 },
                 {
-                    "name": "_recipient",
+                    "name": "recipient",
                     "type": "Address"
                 }
             ],
@@ -46,12 +55,8 @@
             "mutability": "mutable",
             "inputs": [
                 {
-                    "name": "_token_id",
-                    "type": "TokenIdentifier"
-                },
-                {
-                    "name": "_amount",
-                    "type": "BigUint"
+                    "name": "deposit_id",
+                    "type": "u64"
                 }
             ],
             "outputs": []
@@ -62,16 +67,7 @@
             "payableInTokens": [
                 "*"
             ],
-            "inputs": [
-                {
-                    "name": "token_id",
-                    "type": "TokenIdentifier"
-                },
-                {
-                    "name": "amount",
-                    "type": "BigUint"
-                }
-            ],
+            "inputs": [],
             "outputs": []
         },
         {
@@ -139,6 +135,16 @@
                     "type": "u64"
                 }
             ],
+            "outputs": [
+                {
+                    "type": "TokenIdentifier"
+                }
+            ]
+        },
+        {
+            "name": "getToken1",
+            "mutability": "readonly",
+            "inputs": [],
             "outputs": [
                 {
                     "type": "TokenIdentifier"
