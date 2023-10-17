@@ -1,5 +1,5 @@
+import { Label } from '@/components/ui/label';
 import { ContractAddress } from 'components/ContractAddress';
-import { Label } from 'components/Label';
 import { SignedTransactionType } from 'types';
 import { TransactionsOutput } from './TransactionsOutput';
 

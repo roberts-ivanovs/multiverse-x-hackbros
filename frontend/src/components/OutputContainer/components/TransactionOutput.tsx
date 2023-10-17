@@ -1,10 +1,10 @@
+import { Label } from '@/components/ui/label';
 import {
-  TRANSACTIONS_ENDPOINT,
-  ACCOUNTS_ENDPOINT
+  ACCOUNTS_ENDPOINT,
+  TRANSACTIONS_ENDPOINT
 } from '@multiversx/sdk-dapp/apiCalls/endpoints';
 import { useGetNetworkConfig } from '@multiversx/sdk-dapp/hooks/useGetNetworkConfig';
 import { ExplorerLink } from '@multiversx/sdk-dapp/UI/ExplorerLink';
-import { Label } from 'components/Label';
 import { FormatAmount } from 'components/sdkDappComponents';
 import { SignedTransactionType } from 'types';
 
@@ -23,7 +23,7 @@ export const TransactionOutput = ({
         <Label>Hash:</Label>
         <ExplorerLink
           page={`/${TRANSACTIONS_ENDPOINT}/${transaction.hash}`}
-          className='border-b border-dotted border-gray-500 hover:border-solid hover:border-gray-800'
+          className='border-b border-gray-500 border-dotted hover:border-solid hover:border-gray-800'
         >
           {transaction.hash}
         </ExplorerLink>
@@ -32,7 +32,7 @@ export const TransactionOutput = ({
         <Label>Receiver:</Label>
         <ExplorerLink
           page={`/${ACCOUNTS_ENDPOINT}/${transaction.receiver}`}
-          className='border-b border-dotted border-gray-500 hover:border-solid hover:border-gray-800'
+          className='border-b border-gray-500 border-dotted hover:border-solid hover:border-gray-800'
         >
           {transaction.hash}
         </ExplorerLink>
