@@ -86,9 +86,7 @@ impl Service {
             )
             .route("/tokens/:user_address", post(handlers::transfer_to_mx))
             .layer(
-                CorsLayer::new()
-                    .allow_methods([Method::GET, Method::POST, Method::PUT])
-                    .allow_origin(Any),
+                CorsLayer::permissive(),
             )
             .with_state(state.clone());
 
