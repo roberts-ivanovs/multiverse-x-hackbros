@@ -36,6 +36,10 @@ export const getMtxTokens = async (
   });
 
   console.log(`Retrieving multiversx tokens - status: ${response.status}`);
-  console.log(`Retrieving multiversx tokens - token count: ${JSON.stringify(response.data)}`);
+  console.log(
+    `Retrieving multiversx tokens - token count: ${JSON.stringify(
+      response.data
+    )}`
+  );
   return response.data;
 };

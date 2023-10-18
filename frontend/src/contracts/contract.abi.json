@@ -32,6 +32,33 @@
             "outputs": []
         },
         {
+            "name": "issueToken2",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "EGLD"
+            ],
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "issueToken3",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "EGLD"
+            ],
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "issueToken4",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "EGLD"
+            ],
+            "inputs": [],
+            "outputs": []
+        },
+        {
             "name": "mint",
             "mutability": "mutable",
             "inputs": [
@@ -69,6 +96,16 @@
             ],
             "inputs": [],
             "outputs": []
+        },
+        {
+            "name": "getTokenIds",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "List<TokenIdentifier>"
+                }
+            ]
         },
         {
             "name": "deploymentBlock",
@@ -135,16 +172,6 @@
                     "type": "u64"
                 }
             ],
-            "outputs": [
-                {
-                    "type": "TokenIdentifier"
-                }
-            ]
-        },
-        {
-            "name": "getToken1",
-            "mutability": "readonly",
-            "inputs": [],
             "outputs": [
                 {
                     "type": "TokenIdentifier"
