@@ -16,6 +16,39 @@ export default function Transaction() {
   const [isTokenSelectOpen, setIsTokenSelectOpen] = useState(false);
   const [fromValue, setFromValue] = useState('');
 
+  const formatNumber = (numWithZeros: string, decimals: number) => {
+    decimals = decimals - 1;
+    const bigIntNum = BigInt(numWithZeros);
+
+    let numStr = bigIntNum.toString();
+
+    while (numStr.length < decimals) {
+      numStr = '0' + numStr;
+    }
+
+    const integerPart = numStr.slice(0, -decimals);
+    // const decimalPart = numStr.slice(-decimals);
+
+    return `${integerPart}`;
+  };
+
+  function unformatNumber(formattedNum: string, decimals: number) {
+    decimals = decimals - 1;
+    // Remove the decimal point from the formatted number
+    const numWithoutDecimal = formattedNum.replace('.', '');
+
+    // Ensure the number has exactly 18 digits after where the decimal point was
+    let numStr = numWithoutDecimal;
+    while (numStr.length < decimals) {
+      numStr += '0';
+    }
+
+    // Convert to a BigNumber for any further arithmetic operations
+    const bigNum = new BigNumber(numStr);
+
+    return bigNum;
+  }
+
   const gasFee = useMemo(
     () => new BigNumber(fromValue).multipliedBy(0.01),
     [fromValue]
@@ -24,19 +57,21 @@ export default function Transaction() {
   const { address } = useGetAccountInfo();
 
   const { data: tokens } = useAllTokens(address);
+
   const [selectedTransferToken, setSelectedTransferToken] =
-    useState<string>('USDC-123456');
-  const selectedTokenName = useMemo(
-    () =>
-      tokens?.find((token) => token.mx_token_id === selectedTransferToken)
-        ?.name,
+    useState<string>('USDC-0e4543');
+  const selectedToken = useMemo(
+    () => tokens?.find((token) => token.mx_token_id === selectedTransferToken),
     [tokens, selectedTransferToken]
   );
+
   const {
     data: transferResult,
     isSuccess,
     mutate: sendTransaction
   } = useTokenTransfer();
+
+  console.log(tokens);
   const tokensToSend = useMemo(
     () => new BigNumber(fromValue || 0).minus(gasFee),
     [fromValue, gasFee]
@@ -88,42 +123,48 @@ export default function Transaction() {
               </PopoverContent>
             </Popover>
           </div>
-          <p className='text-xs text-white'>
-            <span className='text-white/[0.3]'>Balance: </span>
-            {`${tokens?.find(
-              (token) => token.mx_token_id === selectedTransferToken
-            )?.your_balance} ${selectedTokenName}`}
-          </p>
+          {selectedToken && (
+            <p className='text-xs text-white'>
+              <span className='text-white/[0.3]'>Balance: </span>
+              {`${formatNumber(
+                selectedToken.your_balance,
+                selectedToken.decimals
+              )} ${selectedToken.name}`}
+            </p>
+          )}
         </div>
         <div>
           <Label className='text-sm text-white/[0.3]'>You receive on</Label>
           <Input
             placeholder='Calculated amount'
             disabled={true}
-            value={`${tokensToSend} ${selectedTokenName}`}
+            value={`${tokensToSend} ${selectedToken?.name}`}
             className='bg-black/[0.25] my-1 placeholder:text-white/[0.15] placeholder:text-sm placeholder:font-normal rounded-xl border-none outline-none text-white pr-[120px]'
             type='text'
           />
           <p className='text-xs text-white'>
             <span className='text-white/[0.3]'>Transfer fee: </span>
-            {`${gasFee} ${tokens?.find(
-              (token) => token.mx_token_id === selectedTransferToken
-            )?.name}`}
+            {`${gasFee} ${selectedToken?.name}`}
           </p>
         </div>
       </div>
-      <button
-        onClick={() =>
-          sendTransaction({
-            userAddress: address,
-            amount: tokensToSend.toString(),
-            token: selectedTransferToken
-          })
-        }
-        className='w-full py-2 text-sm font-bold text-white bg-gray-700 rounded-md'
-      >
-        Confirm
-      </button>
+      {selectedToken && (
+        <button
+          onClick={() =>
+            sendTransaction({
+              userAddress: address,
+              amount: unformatNumber(
+                tokensToSend.toString(),
+                selectedToken.decimals
+              ).toString(),
+              token_id: selectedToken.mx_token_id
+            })
+          }
+          className='w-full py-2 text-sm font-bold text-white bg-gray-700 rounded-md'
+        >
+          Confirm
+        </button>
+      )}
     </>
   );
 }

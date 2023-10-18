@@ -173,28 +173,30 @@ pub async fn transfer_to_mx(
         memo: "".to_string(),
     };
 
-    let mut w = app.persistent_data.write().await;
-    let ua = user_address.to_string();
-    match w.balances.get_mut(&ua) {
-        Some(entry) => {
-            let token = entry
-                .iter_mut()
-                .find(|t| t.mx_token_id == payload.token_id)
-                .ok_or(eyre::eyre!("Invalid token"))?;
-            let amount =
-                BigInt::from_str(&token_data.amount).map_err(|_| eyre::eyre!("invalid amount"))?;
-            let token_your_balance = BigInt::from_str(&token.your_balance)
-                .map_err(|_| eyre::eyre!("invalid your balance"))?;
+    // let mut w = app.persistent_data.write().await;
+    // let ua = user_address.to_string();
+    // match w.balances.get_mut(&ua) {
+    //     Some(entry) => {
+    //         let token = entry
+    //             .iter_mut()
+    //             .find(|t| t.mx_token_id == payload.token_id)
+    //             .ok_or(eyre::eyre!("Invalid token"))?;
+    //         let amount =
+    //             BigInt::from_str(&token_data.amount).map_err(|_| eyre::eyre!("invalid amount"))?;
+    //         let token_your_balance = BigInt::from_str(&token.your_balance)
+    //             .map_err(|_| eyre::eyre!("invalid your balance"))?;
 
-            let new_balance = token_your_balance
-                .checked_sub(&amount)
-                .ok_or(eyre::eyre!("Insufficient balance"))?;
-            token.your_balance = new_balance.to_string();
-        }
-        None => {
-            Err(eyre::eyre!("User not found"))?;
-        }
-    };
+    //         let new_balance = token_your_balance
+    //             .checked_sub(&amount)
+    //             .ok_or(eyre::eyre!("Insufficient balance"))?;
+    //         token.your_balance = new_balance.to_string();
+    //     }
+    //     None => {
+    //         Err(eyre::eyre!("User not found"))?;
+    //     }
+    // };
+
+    // drop(w);
 
     sign_tx(&app, token_data).await?;
 
