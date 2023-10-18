@@ -32,6 +32,9 @@ importers:
       '@multiversx/sdk-network-providers':
         specifier: 2.0.0
         version: 2.0.0
+      '@multiversx/sdk-web-wallet-provider':
+        specifier: 3.1.0
+        version: 3.1.0(@multiversx/sdk-core@12.9.0)
       '@radix-ui/react-dialog':
         specifier: ^1.0.5
         version: 1.0.5(@types/react-dom@18.2.8)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
@@ -2597,6 +2600,15 @@ packages:
       '@multiversx/sdk-core': '>= 12.1.0'
     dependencies:
       '@multiversx/sdk-core': 12.6.0
+      qs: 6.10.3
+    dev: false
+
+  /@multiversx/sdk-web-wallet-provider@3.1.0(@multiversx/sdk-core@12.9.0):
+    resolution: {integrity: sha512-gIE7AudJl5Ax64AMAD0o6m0cVi+dI5LW2TSM5M9K7zKMWWCflhv27a2A61JkCIQ6CK5OTIkMXaFb61OzUqhplQ==}
+    peerDependencies:
+      '@multiversx/sdk-core': '>= 12.1.0'
+    dependencies:
+      '@multiversx/sdk-core': 12.9.0
       qs: 6.10.3
     dev: false
 

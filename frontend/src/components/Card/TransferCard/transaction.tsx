@@ -5,8 +5,10 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
+import { useSendTokensFromMx } from '@/hooks/transactions/useSendTokensFromMx';
 import { useAllTokens } from '@/hooks/use-all-tokens';
 import { useTokenTransfer } from '@/hooks/use-token-transfer';
+import { useTransactionStore } from '@/stores/transaction.store';
 import { useGetAccountInfo } from '@multiversx/sdk-dapp/hooks/account/useGetAccountInfo';
 import { BigNumber } from 'bignumber.js';
 import { ChevronsUpDown } from 'lucide-react';
@@ -15,6 +17,7 @@ import { useMemo, useState } from 'react';
 export default function Transaction() {
   const [isTokenSelectOpen, setIsTokenSelectOpen] = useState(false);
   const [fromValue, setFromValue] = useState('');
+  const [isToMx] = useTransactionStore((state) => [state.isToMx]);
 
   const formatNumber = (numWithZeros: string, decimals: number) => {
     decimals = decimals - 1;
@@ -65,21 +68,19 @@ export default function Transaction() {
     [tokens, selectedTransferToken]
   );
 
-  const {
-    data: transferResult,
-    isSuccess,
-    mutate: sendTransaction
-  } = useTokenTransfer();
+  const { transferFromMx, transferToMx } = useTokenTransfer();
 
   console.log(tokens);
   const tokensToSend = useMemo(
     () => new BigNumber(fromValue || 0).minus(gasFee),
     [fromValue, gasFee]
   );
-  console.log(transferResult, isSuccess);
+
+  const { sendTokenFromMx } = useSendTokensFromMx();
 
   return (
     <>
+      <p className='text-white'>{address}</p>
       <div>
         <div className='mb-5'>
           <Label className='text-sm text-white/[0.3]'>You transfer from</Label>
@@ -150,16 +151,28 @@ export default function Transaction() {
       </div>
       {selectedToken && (
         <button
-          onClick={() =>
-            sendTransaction({
-              userAddress: address,
-              amount: unformatNumber(
-                tokensToSend.toString(),
-                selectedToken.decimals
-              ).toString(),
-              token_id: selectedToken.mx_token_id
-            })
-          }
+          onClick={() => {
+            if (isToMx) {
+              transferToMx({
+                userAddress: address,
+                amount: unformatNumber(
+                  tokensToSend.toString(),
+                  selectedToken.decimals
+                ).toString(),
+                token_id: selectedToken.mx_token_id
+              });
+            } else {
+              console.log('SENT TOKENS FROM MULTIVERSEX');
+              sendTokenFromMx(
+                unformatNumber(
+                  tokensToSend.toString(),
+                  selectedToken.decimals
+                ).toString(),
+                selectedToken.mx_token_id
+              );
+              // transferFromMx({});
+            }
+          }}
           className='w-full py-2 text-sm font-bold text-white bg-gray-700 rounded-md'
         >
           Confirm

@@ -2,12 +2,15 @@ import { Card } from '@/components';
 import { MultiversXCard } from '@/components/Card/MultiversXCard/multiversx-card';
 import { OtherTokenCard } from '@/components/Card/OtherTokenCard/other-token-card';
 import { TransferCard } from '@/components/Card/TransferCard/transfer-card.component';
+import { useTransactionStore } from '@/stores/transaction.store';
 import { RepeatIcon } from 'lucide-react';
-import { useState } from 'react';
 import { PageWrapper } from 'wrappers';
 
 export const Home = () => {
-  const [isToMultiversx, setIsToMultiversx] = useState(true);
+  const [isToMx, setIsToMx] = useTransactionStore((state) => [
+    state.isToMx,
+    state.setIsToMx
+  ]);
 
   return (
     <PageWrapper>
@@ -49,11 +52,11 @@ export const Home = () => {
             }
             title='Connect your source wallet'
           >
-            {isToMultiversx ? <OtherTokenCard /> : <MultiversXCard />}
+            {isToMx ? <OtherTokenCard /> : <MultiversXCard />}
           </Card>
           <div
             className='z-10 flex items-center -my-[36px] self-center justify-center bg-gray-700 rounded-xl hover:bg-gray-600 duration-150 cursor-pointer w-[64px] -mx-[44px] h-fit'
-            onClick={() => setIsToMultiversx((prev) => !prev)}
+            onClick={() => setIsToMx(!isToMx)}
           >
             <RepeatIcon className='w-full h-[46px] p-3 text-white ' />
           </div>
@@ -65,7 +68,7 @@ export const Home = () => {
             }
             title='Connect your destination wallet'
           >
-            {!isToMultiversx ? <OtherTokenCard /> : <MultiversXCard />}
+            {!isToMx ? <OtherTokenCard /> : <MultiversXCard />}
           </Card>
           <TransferCard />
         </div>

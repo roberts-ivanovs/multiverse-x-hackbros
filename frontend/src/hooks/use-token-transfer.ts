@@ -4,7 +4,8 @@ import { useMutation, useQueryClient } from 'react-query';
 
 export function useTokenTransfer() {
   const queryClient = useQueryClient();
-  return useMutation(
+
+  const { mutate: transferToMx } = useMutation(
     ['tokens'],
     async ({
       userAddress,
@@ -27,4 +28,18 @@ export function useTokenTransfer() {
       }
     }
   );
+
+  const { mutate: transferFromMx } = useMutation(
+    ['tokens'],
+    async ({ signer }) => {
+      // SDK logic
+    },
+    {
+      onSuccess() {
+        queryClient.invalidateQueries(['tokens']);
+      }
+    }
+  );
+
+  return { transferFromMx, transferToMx };
 }

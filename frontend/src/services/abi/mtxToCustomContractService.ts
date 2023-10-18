@@ -1,23 +1,22 @@
-import { ResultsParser } from 'utils';
-import { smartContract } from 'utils/smartContract';
-import {
-  TokenTransfer,
-  GasEstimator,
-  TransferTransactionsFactory,
-  Address
-} from '@multiversx/sdk-core';
-import { ContractFunction, U64Value } from '@multiversx/sdk-core/out';
 import { getChainId } from '@/utils/getChainId';
 import {
+  Address,
+  GasEstimator,
+  TokenTransfer,
+  TransferTransactionsFactory
+} from '@multiversx/sdk-core';
+import { ContractFunction, U64Value } from '@multiversx/sdk-core/out';
+import {
   ApiNetworkProvider,
-  ProxyNetworkProvider,
   TransactionOnNetwork
 } from '@multiversx/sdk-network-providers/out';
-import axios, { AxiosResponse } from 'axios';
 import {
-  WalletProvider,
-  WALLET_PROVIDER_DEVNET
+  WALLET_PROVIDER_DEVNET,
+  WalletProvider
 } from '@multiversx/sdk-web-wallet-provider';
+import axios, { AxiosResponse } from 'axios';
+import { ResultsParser } from 'utils';
+import { smartContract } from 'utils/smartContract';
 
 const resultsParser = new ResultsParser();
 
