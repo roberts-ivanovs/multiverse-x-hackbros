@@ -6,7 +6,7 @@ use multiversx_sc_snippets::multiversx_sc_scenario::api::StaticApi;
 
 use num_bigint::BigUint;
 
-use crate::{handlers::TokenId, state::WebAppState, storage_layer::EventHash};
+use crate::{handlers::{TokenId, TokenDefinition}, state::WebAppState, storage_layer::EventHash};
 
 #[derive(Debug)]
 struct Block(pub u64);
@@ -148,6 +148,11 @@ async fn update_balance(app: &Arc<WebAppState>, events: Vec<MxOutEvent>) -> anyh
                     let your_balance = your_balance + event.amount;
                     x.your_balance = your_balance.to_string();
                 }
+            } else {
+                // TODO we create a new token definition here for the user
+                // balances.push(TokenDefinition {
+                //     address: event.user,
+                // });
             }
         }
 
