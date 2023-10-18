@@ -5,7 +5,7 @@ mod mtx;
 mod state;
 mod storage_layer;
 
-use axum::http::Method;
+use futures_concurrency::prelude::*;
 use axum::{
     routing::post,
     routing::{get, patch},
@@ -85,9 +85,7 @@ impl Service {
                 patch(handlers::mint_new_tokens_on_the_other_chain),
             )
             .route("/tokens/:user_address", post(handlers::transfer_to_mx))
-            .layer(
-                CorsLayer::permissive(),
-            )
+            .layer(CorsLayer::permissive())
             .with_state(state.clone());
 
         let server = axum::Server::from_tcp(self.web_listener)
@@ -95,21 +93,18 @@ impl Service {
             .serve(app.into_make_service());
 
         // Start listening for chain events
-        let mut monitor_handle = tokio::spawn(async move {
-            mtx::monitor::run(state).await;
-        });
-        let mut server_handle = tokio::spawn(async move {
-            server.await.unwrap();
-        });
+        let state_c = state.clone();
+        let a = async move {
+            mtx::monitor::run(state_c).await;
+        };
+        let b = async move {
+            let _ = server.await;
+        };
 
-        tokio::select! {
-            _ = &mut server_handle => {
-                monitor_handle.abort();
-            },
-            _ = &mut monitor_handle => {
-                server_handle.abort();
-            },
-        }
+        a.race(b).await;
+
+        let w = state.persistent_data.write().await;
+        let _ = w.write_to_disk(&state.storage_fs_path).await;
     }
 
     pub fn local_addr(&self) -> std::io::Result<SocketAddr> {

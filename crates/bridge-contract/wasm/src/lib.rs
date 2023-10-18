@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                           13
+// Endpoints:                           14
 // Async Callback (empty):               1
-// Total number of exported functions:  15
+// Total number of exported functions:  16
 
 #![no_std]
 #![allow(internal_features)]
@@ -20,6 +20,7 @@ multiversx_sc_wasm_adapter::endpoints! {
     contract
     (
         init => init
+        getCurrentBlockNonce => get_current_block_nonce
         issueToken1 => issue_token1
         issueToken2 => issue_token2
         issueToken3 => issue_token3
