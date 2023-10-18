@@ -28,7 +28,7 @@ pub struct TokenDefinition {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
-pub struct TokenId(String);
+pub struct TokenId(pub String);
 
 impl TokenId {
     pub fn new_with_identifier(
@@ -154,7 +154,7 @@ pub async fn list_all_user_tokens(
 
 #[derive(Debug, Deserialize)]
 pub struct CreateTokenTransferPayload {
-    token_denom: String,
+    token_id: TokenId,
     amount: String,
 }
 
@@ -166,7 +166,7 @@ pub async fn transfer_to_mx(
     Json(payload): Json<CreateTokenTransferPayload>,
 ) -> Result<Json<Value>, AppError> {
     let token_data = FungibleTokenPacketData {
-        denom: payload.token_denom,
+        denom: payload.token_id.0.clone(),
         amount: payload.amount,
         sender: app.wallet.expose_secret().address().to_string(),
         receiver: user_address.to_string(),
@@ -181,7 +181,7 @@ pub async fn transfer_to_mx(
         Some(entry) => {
             let token = entry
                 .iter_mut()
-                .find(|t| t.symbol.0 == token_data.denom)
+                .find(|t| t.mx_token_id == payload.token_id)
                 .ok_or(eyre::eyre!("Invalid token"))?;
             let amount =
                 BigInt::from_str(&token_data.amount).map_err(|_| eyre::eyre!("invalid amount"))?;

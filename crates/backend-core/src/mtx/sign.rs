@@ -23,7 +23,7 @@ pub async fn sign_tx(app: &WebAppState, token_data: FungibleTokenPacketData) -> 
 
     let token = ALL_TOKENS
         .iter()
-        .find(|x| x.symbol.0 == token_data.denom)
+        .find(|x| x.mx_token_id.0 == token_data.denom)
         .ok_or(eyre::eyre!("invalid token"))?;
 
     let mutate_state_call = vault_contract
