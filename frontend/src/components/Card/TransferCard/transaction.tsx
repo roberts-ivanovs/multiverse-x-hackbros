@@ -5,7 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
-import { useSendTokensFromMx } from '@/hooks/transactions/useSendTokensFromMx';
+import { useSendTokensFromMx } from '@/hooks/transactions/use-send-tokens-from-mx';
 import { useAllTokens } from '@/hooks/use-all-tokens';
 import { useTokenTransfer } from '@/hooks/use-token-transfer';
 import { useTransactionStore } from '@/stores/transaction.store';
@@ -19,8 +19,8 @@ export default function Transaction() {
   const [fromValue, setFromValue] = useState('');
   const [isToMx] = useTransactionStore((state) => [state.isToMx]);
 
-  const formatNumber = (numWithZeros: string, decimals: number) => {
-    decimals = decimals - 1;
+  const formatNumberForUI = (numWithZeros: string, decimals: number) => {
+    decimals = decimals - 5;
     const bigIntNum = BigInt(numWithZeros);
 
     let numStr = bigIntNum.toString();
@@ -35,8 +35,8 @@ export default function Transaction() {
     return `${integerPart}`;
   };
 
-  function unformatNumber(formattedNum: string, decimals: number) {
-    decimals = decimals - 1;
+  function formatNumberForTx(formattedNum: string, decimals: number) {
+    decimals = decimals + 2;
     // Remove the decimal point from the formatted number
     const numWithoutDecimal = formattedNum.replace('.', '');
 
@@ -62,7 +62,7 @@ export default function Transaction() {
   const { data: tokens } = useAllTokens(address);
 
   const [selectedTransferToken, setSelectedTransferToken] =
-    useState<string>('USDC-0e4543');
+    useState<string>('USDC-f46522');
   const selectedToken = useMemo(
     () => tokens?.find((token) => token.mx_token_id === selectedTransferToken),
     [tokens, selectedTransferToken]
@@ -127,7 +127,7 @@ export default function Transaction() {
           {selectedToken && (
             <p className='text-xs text-white'>
               <span className='text-white/[0.3]'>Balance: </span>
-              {`${formatNumber(
+              {`${formatNumberForUI(
                 selectedToken.your_balance,
                 selectedToken.decimals
               )} ${selectedToken.name}`}
@@ -155,7 +155,7 @@ export default function Transaction() {
             if (isToMx) {
               transferToMx({
                 userAddress: address,
-                amount: unformatNumber(
+                amount: formatNumberForTx(
                   tokensToSend.toString(),
                   selectedToken.decimals
                 ).toString(),
@@ -164,10 +164,8 @@ export default function Transaction() {
             } else {
               console.log('SENT TOKENS FROM MULTIVERSEX');
               sendTokenFromMx(
-                unformatNumber(
-                  tokensToSend.toString(),
-                  selectedToken.decimals
-                ).toString(),
+                tokensToSend.toString(),
+
                 selectedToken.mx_token_id
               );
               // transferFromMx({});
