@@ -173,8 +173,6 @@ pub async fn transfer_to_mx(
         memo: "".to_string(),
     };
 
-    // TODO deduct the amount from the user's balance
-
     let mut w = app.persistent_data.write().await;
     let ua = user_address.to_string();
     match w.balances.get_mut(&ua) {
