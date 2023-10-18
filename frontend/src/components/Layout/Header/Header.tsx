@@ -1,16 +1,7 @@
 import { environment } from 'config';
-import { logout } from 'helpers';
-import { useGetIsLoggedIn } from 'hooks';
 import MultiversXLogo from '../../../assets/img/multiversx-logo.svg?react';
 
 export const Header = () => {
-  const isLoggedIn = useGetIsLoggedIn();
-
-  const handleLogout = () => {
-    sessionStorage.clear();
-    logout(`${window.location.origin}/unlock`, undefined, false);
-  };
-
   return (
     <header className='flex flex-row justify-between px-12 pt-6 align-center'>
       <div className='flex gap-5'>
