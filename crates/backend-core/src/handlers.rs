@@ -28,7 +28,7 @@ pub struct TokenDefinition {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
-pub struct TokenId(String);
+pub struct TokenId(pub String);
 
 impl TokenId {
     pub fn new_with_identifier(
@@ -57,7 +57,7 @@ pub static ALL_TOKENS: [TokenDefinition; 4] = [
     TokenDefinition {
         name: "USDC".to_string(),
         symbol: Symbol("USDC".to_string()),
-        mx_token_id: TokenId::new_with_string("USDC-123456".to_string()),
+        mx_token_id: TokenId::new_with_string("USDC-0e4543".to_string()),
         decimals: 18,
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
@@ -66,7 +66,7 @@ pub static ALL_TOKENS: [TokenDefinition; 4] = [
         name: "ETH".to_string(),
         symbol: Symbol("ETH".to_string()),
         decimals: 18,
-        mx_token_id: TokenId::new_with_string("ETH-123456".to_string()),
+        mx_token_id: TokenId::new_with_string("ETH-53c925".to_string()),
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
@@ -74,7 +74,7 @@ pub static ALL_TOKENS: [TokenDefinition; 4] = [
         name: "EVMOS".to_string(),
         symbol: Symbol("EVMOS".to_string()),
         decimals: 18,
-        mx_token_id: TokenId::new_with_string("EVMOS-123456".to_string()),
+        mx_token_id: TokenId::new_with_string("EVMOS-42dd48".to_string()),
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
@@ -82,7 +82,7 @@ pub static ALL_TOKENS: [TokenDefinition; 4] = [
         name: "WrappedMX".to_string(),
         symbol: Symbol("WrappedMX".to_string()),
         decimals: 18,
-        mx_token_id: TokenId::new_with_string("WrappedMX-123456".to_string()),
+        mx_token_id: TokenId::new_with_string("WEGLD-4505c8".to_string()),
         address: "0x1234".to_string(),
         your_balance: "1000000000000000000000000000".to_string(),
     },
@@ -154,7 +154,7 @@ pub async fn list_all_user_tokens(
 
 #[derive(Debug, Deserialize)]
 pub struct CreateTokenTransferPayload {
-    token_denom: String,
+    token_id: TokenId,
     amount: String,
 }
 
@@ -166,37 +166,37 @@ pub async fn transfer_to_mx(
     Json(payload): Json<CreateTokenTransferPayload>,
 ) -> Result<Json<Value>, AppError> {
     let token_data = FungibleTokenPacketData {
-        denom: payload.token_denom,
+        denom: payload.token_id.0.clone(),
         amount: payload.amount,
         sender: app.wallet.expose_secret().address().to_string(),
         receiver: user_address.to_string(),
         memo: "".to_string(),
     };
 
-    // TODO deduct the amount from the user's balance
+    // let mut w = app.persistent_data.write().await;
+    // let ua = user_address.to_string();
+    // match w.balances.get_mut(&ua) {
+    //     Some(entry) => {
+    //         let token = entry
+    //             .iter_mut()
+    //             .find(|t| t.mx_token_id == payload.token_id)
+    //             .ok_or(eyre::eyre!("Invalid token"))?;
+    //         let amount =
+    //             BigInt::from_str(&token_data.amount).map_err(|_| eyre::eyre!("invalid amount"))?;
+    //         let token_your_balance = BigInt::from_str(&token.your_balance)
+    //             .map_err(|_| eyre::eyre!("invalid your balance"))?;
 
-    let mut w = app.persistent_data.write().await;
-    let ua = user_address.to_string();
-    match w.balances.get_mut(&ua) {
-        Some(entry) => {
-            let token = entry
-                .iter_mut()
-                .find(|t| t.symbol.0 == token_data.denom)
-                .ok_or(eyre::eyre!("Invalid token"))?;
-            let amount =
-                BigInt::from_str(&token_data.amount).map_err(|_| eyre::eyre!("invalid amount"))?;
-            let token_your_balance = BigInt::from_str(&token.your_balance)
-                .map_err(|_| eyre::eyre!("invalid your balance"))?;
+    //         let new_balance = token_your_balance
+    //             .checked_sub(&amount)
+    //             .ok_or(eyre::eyre!("Insufficient balance"))?;
+    //         token.your_balance = new_balance.to_string();
+    //     }
+    //     None => {
+    //         Err(eyre::eyre!("User not found"))?;
+    //     }
+    // };
 
-            let new_balance = token_your_balance
-                .checked_sub(&amount)
-                .ok_or(eyre::eyre!("Insufficient balance"))?;
-            token.your_balance = new_balance.to_string();
-        }
-        None => {
-            Err(eyre::eyre!("User not found"))?;
-        }
-    };
+    // drop(w);
 
     sign_tx(&app, token_data).await?;
 

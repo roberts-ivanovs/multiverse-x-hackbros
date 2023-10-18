@@ -9,15 +9,15 @@ export function useTokenTransfer() {
     async ({
       userAddress,
       amount,
-      token
+      token_id
     }: {
       userAddress: string;
       amount: string;
-      token: string;
+      token_id: string;
     }) => {
       const { data } = await axios.post(`${host}/tokens/${userAddress}`, {
         amount,
-        token_denom: token
+        token_id
       });
       return data;
     },

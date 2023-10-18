@@ -12,7 +12,7 @@ export const Home = () => {
   return (
     <PageWrapper>
       <div className='flex flex-col items-center w-full h-full'>
-        <div className='self-start mt-10'>
+        <div className='self-start my-10'>
           <h1 className='mb-10 text-5xl font-bold text-white'>
             <span className='underline decoration-accent-100 decoration-dotted hover:decoration-solid'>
               IBC protocol
@@ -40,7 +40,7 @@ export const Home = () => {
             blockchain.
           </p>
         </div>
-        <div className='flex my-auto self-start max-w-[70sch] gap-[24px] text-center sm:text-left font-medium'>
+        <div className='flex flex-col lg:flex-row my-auto self-start w-full gap-[24px] text-center sm:text-left font-medium'>
           <Card
             icon={
               <div className='flex items-center justify-center w-8 h-8 text-sm font-bold text-white bg-gray-900 rounded-full'>
@@ -52,7 +52,7 @@ export const Home = () => {
             {isToMultiversx ? <OtherTokenCard /> : <MultiversXCard />}
           </Card>
           <div
-            className='z-10 flex items-center self-center justify-center bg-gray-700 rounded-xl hover:bg-gray-600 duration-150 cursor-pointer w-[64px] -mx-[44px] h-fit'
+            className='z-10 flex items-center -my-[36px] self-center justify-center bg-gray-700 rounded-xl hover:bg-gray-600 duration-150 cursor-pointer w-[64px] -mx-[44px] h-fit'
             onClick={() => setIsToMultiversx((prev) => !prev)}
           >
             <RepeatIcon className='w-full h-[46px] p-3 text-white ' />

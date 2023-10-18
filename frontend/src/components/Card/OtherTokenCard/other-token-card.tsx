@@ -24,8 +24,11 @@ export function OtherTokenCard() {
   return (
     <>
       <div className='relative flex items-center justify-center mb-20'>
-        <div className='absolute w-1/2 rounded-full opacity-25 aspect-square bg-radial-gradient-yellow' />
-        <Canvas camera={{ fov: 40 }} style={{ width: '100%', height: '100%' }}>
+        <div className='absolute w-[150px] rounded-full opacity-25 aspect-square bg-radial-gradient-yellow' />
+        <Canvas
+          camera={{ fov: 40 }}
+          style={{ width: '150px', height: '150px' }}
+        >
           <Suspense fallback={null}>
             <Coin />
           </Suspense>
@@ -39,7 +42,6 @@ export function OtherTokenCard() {
           />
           <pointLight position={[0, 1.5, -2]} intensity={100} />
           <pointLight position={[0, 1.5, 2]} intensity={50} />
-          {/* <pointLight position={[0, 5, 0]} intensity={100} /> */}
           <EffectComposer>
             <Bloom
               luminanceSmoothing={100}

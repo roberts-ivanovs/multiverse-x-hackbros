@@ -8,7 +8,7 @@ SERVE_ADDR = "0.0.0.0:3333"
 STORAGE_PATH = "./storage.json"
 MULTIVERS_X_GATEWAY = "https://devnet-gateway.multiversx.com"
 MULTIVERS_X_PRIVATE_KEY = "977e6db744025e00ed790ce96959a09b32704690801891b6a063c82e1c958110"
-MULTIVERS_X_SMART_CONTRACT_ADDRESS = "erd1qqqqqqqqqqqqqpgqkmfeuhr9kcww8lvnvsg75yvrq5gnwhkjh9kqxdgfa3"
+MULTIVERS_X_SMART_CONTRACT_ADDRESS = "erd1qqqqqqqqqqqqqpgqadcs8ucgal22mzy0fsv6zydzrchkfnfmrq0q4gzuam"
 
 [tasks.build]
 workspace = false
@@ -62,18 +62,18 @@ workspace = false
 install_crate = "cargo-nextest"
 
 [tasks.test]
-env = { "RUST_LOG"="debug" }
+env = { "RUST_LOG" = "debug" }
 workspace = false
 command = "cargo"
 args = [
-    "nextest",
-    "run",
-    "--workspace",
-    "--bins",
-    "--tests",
-    "--all-targets",
-    "--no-fail-fast",
-    "${@}"
+  "nextest",
+  "run",
+  "--workspace",
+  "--bins",
+  "--tests",
+  "--all-targets",
+  "--no-fail-fast",
+  "${@}",
 ]
 dependencies = ["nextest-base"]
 
@@ -85,7 +85,7 @@ args = ["nextest", "run"]
 dependencies = ["nextest-base"]
 
 [tasks.coverage]
-env = { "RUST_LOG"="debug" }
+env = { "RUST_LOG" = "debug" }
 workspace = false
 install_crate = "grcov"
 dependencies = ["coverage-base"]
