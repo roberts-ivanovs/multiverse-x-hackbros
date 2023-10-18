@@ -21,7 +21,6 @@ import { RouteNamesEnum } from 'localConstants';
 import { PageNotFound } from 'pages';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { routes } from 'routes';
-import { BatchTransactionsContextProvider } from 'wrappers';
 
 const queryClient = new QueryClient();
 
@@ -36,7 +35,7 @@ const AppContent = () => {
       }}
       dappConfig={{
         shouldUseWebViewProvider: true,
-        logoutRoute: RouteNamesEnum.unlock
+        logoutRoute: RouteNamesEnum.dashboard
       }}
       customComponents={{
         transactionTracker: {
@@ -60,7 +59,6 @@ const AppContent = () => {
             <NotificationModal />
             <SignTransactionsModals />
             <Routes>
-              {/* <Route path={RouteNamesEnum.unlock} element={<Unlock />} /> */}
               {routes.map((route) => (
                 <Route
                   path={route.path}
@@ -84,9 +82,7 @@ export const App = () => {
         authenticatedDomanis={sampleAuthenticatedDomains}
       >
         <Router>
-          <BatchTransactionsContextProvider>
-            <AppContent />
-          </BatchTransactionsContextProvider>
+          <AppContent />
         </Router>
       </AxiosInterceptorContext.Interceptor>
     </AxiosInterceptorContext.Provider>

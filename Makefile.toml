@@ -8,7 +8,7 @@ SERVE_ADDR = "0.0.0.0:3333"
 STORAGE_PATH = "./storage.json"
 MULTIVERS_X_GATEWAY = "https://devnet-gateway.multiversx.com"
 MULTIVERS_X_PRIVATE_KEY = "977e6db744025e00ed790ce96959a09b32704690801891b6a063c82e1c958110"
-MULTIVERS_X_SMART_CONTRACT_ADDRESS = "erd1qqqqqqqqqqqqqpgqadcs8ucgal22mzy0fsv6zydzrchkfnfmrq0q4gzuam"
+MULTIVERS_X_SMART_CONTRACT_ADDRESS = "erd1qqqqqqqqqqqqqpgqe3qfsrs4wfneqlq8zdgwesr5auugt09th9kqely25h"
 
 [tasks.build]
 workspace = false

@@ -11,6 +11,12 @@ pub trait Contract {
         self.current_deposit_id().set(0);
     }
 
+
+    #[view(getCurrentBlockNonce)]
+    fn get_current_block_nonce(&self) -> u64 {
+        self.blockchain().get_block_nonce()
+    }
+
     #[endpoint(issueToken1)]
     #[payable("EGLD")]
     fn issue_token1(&self) {
@@ -108,7 +114,7 @@ pub trait Contract {
 
     #[storage_mapper("current_deposit_id")]
     fn current_deposit_id(&self) -> SingleValueMapper<u64>;
-    
+
     #[storage_mapper("token_1")]
     fn token_1(&self) -> FungibleTokenMapper;
 

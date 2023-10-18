@@ -1,15 +1,19 @@
 use std::{str::FromStr, sync::Arc};
 
 use contract::ProxyTrait;
-use multiversx_sc::{storage::mappers::SingleValue, types::MultiValueEncoded};
+use multiversx_sc::{storage::mappers::{SingleValue, FungibleTokenMapper}, types::MultiValueEncoded};
 use multiversx_sc_snippets::multiversx_sc_scenario::api::StaticApi;
 
 use num_bigint::BigUint;
 
-use crate::{handlers::{TokenId, TokenDefinition}, state::WebAppState, storage_layer::EventHash};
+use crate::{
+    handlers::{TokenDefinition, TokenId},
+    state::WebAppState,
+    storage_layer::EventHash,
+};
 
 #[derive(Debug)]
-struct Block(pub u64);
+pub struct Block(pub u64);
 
 pub async fn run(app: Arc<WebAppState>) {
     let mut data = app.persistent_data.write().await;
@@ -30,6 +34,7 @@ pub async fn run(app: Arc<WebAppState>) {
 
         let r = app.persistent_data.read().await;
         let _ = r.write_to_disk(&app.storage_fs_path).await;
+        drop(r)
     }
 }
 
@@ -54,11 +59,6 @@ async fn react_on_events_in_range(
 ) -> Result<(), anyhow::Error> {
     let mut new_last_parsed_block = last_parsed_block;
     for (idx, block) in (last_parsed_block..latest_block).enumerate() {
-        if idx == 5 {
-            // Take a break every 5 blocks
-            break;
-        }
-
         let events = fetch_events(app, Block(block)).await?;
         if events.is_empty() {
             new_last_parsed_block = block;
@@ -70,7 +70,12 @@ async fn react_on_events_in_range(
             continue;
         }
         update_balance(app, unique_events).await?;
+
         new_last_parsed_block = block;
+        if idx >= 5 {
+            // Take a break every 5 blocks
+            break;
+        }
     }
 
     let mut w = app.persistent_data.write().await;
@@ -84,7 +89,6 @@ async fn react_on_events_in_range(
 async fn fetch_events(app: &Arc<WebAppState>, at_block: Block) -> anyhow::Result<Vec<MxOutEvent>> {
     use contract::ProxyTrait as _;
 
-    let _r = app.interactor.read().await;
     let mut vault_contract = app.vault_contract.write().await;
 
     let mut interactor = app.interactor.write().await;
@@ -133,6 +137,7 @@ async fn parse_unique_events(
         .into_iter()
         .filter(|x| r.contains(&x.event_hash))
         .collect::<Vec<_>>();
+    drop(r);
     Ok(events)
 }
 
@@ -148,16 +153,12 @@ async fn update_balance(app: &Arc<WebAppState>, events: Vec<MxOutEvent>) -> anyh
                     let your_balance = your_balance + event.amount;
                     x.your_balance = your_balance.to_string();
                 }
-            } else {
-                // TODO we create a new token definition here for the user
-                // balances.push(TokenDefinition {
-                //     address: event.user,
-                // });
             }
         }
 
         w.add_event_hash(event.event_hash)
     }
+    drop(w);
 
     Ok(())
 }
@@ -179,15 +180,18 @@ async fn get_deployment_block(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
     Ok(Block(result))
 }
 
-#[tracing::instrument(skip(_app), ret, err)]
-async fn get_current_block(_app: &Arc<WebAppState>) -> anyhow::Result<Block> {
-    let mut latest_block = reqwest::get("https://devnet-api.multiversx.com/blocks/latest")
-        .await?
-        .json::<serde_json::Value>()
-        .await?;
+#[tracing::instrument(skip(app), ret, err)]
+async fn get_current_block(app: &Arc<WebAppState>) -> anyhow::Result<Block> {
+    let mut interactor = app.interactor.write().await;
+    let mut vault_contract = app.vault_contract.write().await;
 
-    let nonce = latest_block["nonce"].take();
-    let nonce = serde_json::from_value::<u64>(nonce)?;
+    // Read the state
+    let nonce: u64 = interactor
+        .0
+        .quick_query(vault_contract.0.get_current_block_nonce())
+        .await;
+    let nonce = nonce.into();
+
     Ok(Block(nonce))
 }
 
