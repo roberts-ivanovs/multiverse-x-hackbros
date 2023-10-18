@@ -1,1 +1,1 @@
-export * from './useSendPingPongTransaction';
+export * from './use-send-tokens-from-mx';

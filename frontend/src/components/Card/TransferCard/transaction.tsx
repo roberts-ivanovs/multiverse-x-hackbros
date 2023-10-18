@@ -5,8 +5,10 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
+import { useSendTokensFromMx } from '@/hooks/transactions/use-send-tokens-from-mx';
 import { useAllTokens } from '@/hooks/use-all-tokens';
 import { useTokenTransfer } from '@/hooks/use-token-transfer';
+import { useTransactionStore } from '@/stores/transaction.store';
 import { useGetAccountInfo } from '@multiversx/sdk-dapp/hooks/account/useGetAccountInfo';
 import { BigNumber } from 'bignumber.js';
 import { ChevronsUpDown } from 'lucide-react';
@@ -15,9 +17,10 @@ import { useMemo, useState } from 'react';
 export default function Transaction() {
   const [isTokenSelectOpen, setIsTokenSelectOpen] = useState(false);
   const [fromValue, setFromValue] = useState('');
+  const [isToMx] = useTransactionStore((state) => [state.isToMx]);
 
-  const formatNumber = (numWithZeros: string, decimals: number) => {
-    decimals = decimals - 1;
+  const formatNumberForUI = (numWithZeros: string, decimals: number) => {
+    decimals = decimals - 5;
     const bigIntNum = BigInt(numWithZeros);
 
     let numStr = bigIntNum.toString();
@@ -32,8 +35,8 @@ export default function Transaction() {
     return `${integerPart}`;
   };
 
-  function unformatNumber(formattedNum: string, decimals: number) {
-    decimals = decimals - 1;
+  function formatNumberForTx(formattedNum: string, decimals: number) {
+    decimals = decimals + 2;
     // Remove the decimal point from the formatted number
     const numWithoutDecimal = formattedNum.replace('.', '');
 
@@ -59,27 +62,25 @@ export default function Transaction() {
   const { data: tokens } = useAllTokens(address);
 
   const [selectedTransferToken, setSelectedTransferToken] =
-    useState<string>('USDC-0e4543');
+    useState<string>('USDC-f46522');
   const selectedToken = useMemo(
     () => tokens?.find((token) => token.mx_token_id === selectedTransferToken),
     [tokens, selectedTransferToken]
   );
 
-  const {
-    data: transferResult,
-    isSuccess,
-    mutate: sendTransaction
-  } = useTokenTransfer();
+  const { transferFromMx, transferToMx } = useTokenTransfer();
 
   console.log(tokens);
   const tokensToSend = useMemo(
     () => new BigNumber(fromValue || 0).minus(gasFee),
     [fromValue, gasFee]
   );
-  console.log(transferResult, isSuccess);
+
+  const { sendTokenFromMx } = useSendTokensFromMx();
 
   return (
     <>
+      <p className='text-white'>{address}</p>
       <div>
         <div className='mb-5'>
           <Label className='text-sm text-white/[0.3]'>You transfer from</Label>
@@ -126,7 +127,7 @@ export default function Transaction() {
           {selectedToken && (
             <p className='text-xs text-white'>
               <span className='text-white/[0.3]'>Balance: </span>
-              {`${formatNumber(
+              {`${formatNumberForUI(
                 selectedToken.your_balance,
                 selectedToken.decimals
               )} ${selectedToken.name}`}
@@ -150,16 +151,26 @@ export default function Transaction() {
       </div>
       {selectedToken && (
         <button
-          onClick={() =>
-            sendTransaction({
-              userAddress: address,
-              amount: unformatNumber(
+          onClick={() => {
+            if (isToMx) {
+              transferToMx({
+                userAddress: address,
+                amount: formatNumberForTx(
+                  tokensToSend.toString(),
+                  selectedToken.decimals
+                ).toString(),
+                token_id: selectedToken.mx_token_id
+              });
+            } else {
+              console.log('SENT TOKENS FROM MULTIVERSEX');
+              sendTokenFromMx(
                 tokensToSend.toString(),
-                selectedToken.decimals
-              ).toString(),
-              token_id: selectedToken.mx_token_id
-            })
-          }
+
+                selectedToken.mx_token_id
+              );
+              // transferFromMx({});
+            }
+          }}
           className='w-full py-2 text-sm font-bold text-white bg-gray-700 rounded-md'
         >
           Confirm
