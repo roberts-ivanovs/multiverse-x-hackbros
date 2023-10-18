@@ -5,17 +5,18 @@ mod mtx;
 mod state;
 mod storage_layer;
 
-use std::{
-    net::{SocketAddr, TcpListener},
-    sync::Arc,
-};
-
+use axum::http::Method;
 use axum::{
     routing::post,
     routing::{get, patch},
     Router,
 };
 pub use configuration::Configuration;
+use std::{
+    net::{SocketAddr, TcpListener},
+    sync::Arc,
+};
+use tower_http::cors::{Any, CorsLayer};
 
 use multiversx_sc_snippets::{multiversx_sc_scenario::scenario_model::AddressKey, Interactor};
 use multiversx_sdk::{blockchain::CommunicationProxy, wallet::Wallet};
@@ -84,6 +85,9 @@ impl Service {
                 patch(handlers::mint_new_tokens_on_the_other_chain),
             )
             .route("/tokens/:user_address", post(handlers::transfer_to_mx))
+            .layer(
+                CorsLayer::permissive(),
+            )
             .with_state(state.clone());
 
         let server = axum::Server::from_tcp(self.web_listener)

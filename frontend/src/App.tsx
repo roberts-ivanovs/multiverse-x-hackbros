@@ -19,8 +19,11 @@ import {
 } from 'config';
 import { RouteNamesEnum } from 'localConstants';
 import { PageNotFound } from 'pages';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { routes } from 'routes';
 import { BatchTransactionsContextProvider } from 'wrappers';
+
+const queryClient = new QueryClient();
 
 const AppContent = () => {
   return (
@@ -50,24 +53,26 @@ const AppContent = () => {
         }
       }}
     >
-      <AxiosInterceptorContext.Listener>
-        <Layout>
-          <TransactionsToastList />
-          <NotificationModal />
-          <SignTransactionsModals />
-          <Routes>
-            {/* <Route path={RouteNamesEnum.unlock} element={<Unlock />} /> */}
-            {routes.map((route) => (
-              <Route
-                path={route.path}
-                key={`route-key-'${route.path}`}
-                element={<route.component />}
-              />
-            ))}
-            <Route path='*' element={<PageNotFound />} />
-          </Routes>
-        </Layout>
-      </AxiosInterceptorContext.Listener>
+      <QueryClientProvider client={queryClient}>
+        <AxiosInterceptorContext.Listener>
+          <Layout>
+            <TransactionsToastList />
+            <NotificationModal />
+            <SignTransactionsModals />
+            <Routes>
+              {/* <Route path={RouteNamesEnum.unlock} element={<Unlock />} /> */}
+              {routes.map((route) => (
+                <Route
+                  path={route.path}
+                  key={`route-key-'${route.path}`}
+                  element={<route.component />}
+                />
+              ))}
+              <Route path='*' element={<PageNotFound />} />
+            </Routes>
+          </Layout>
+        </AxiosInterceptorContext.Listener>
+      </QueryClientProvider>
     </DappProvider>
   );
 };

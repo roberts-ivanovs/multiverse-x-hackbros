@@ -21,14 +21,17 @@ module.exports = {
         urbanist: ['Urbanist', 'sans-serif']
       },
       backgroundImage: {
-        'radial-gradient':
-          'radial-gradient(circle, rgba(35,247,221,0) 40%, rgba(35,247,221,1) 100%)'
+        'radial-gradient-blue':
+          'radial-gradient(circle, rgba(35,247,221,0) 40%, rgba(35,247,221,1) 100%)',
+        'radial-gradient-yellow':
+          'radial-gradient(circle, rgba(247,223,46,0) 40%, rgba(247,223,46,1) 100%)'
       },
       colors: {
         accent: {
           100: '#23F7DD'
         },
         gray: {
+          600: '#2b2b2b',
           700: '#242424',
           800: '#171717',
           900: '#131313'

@@ -20,10 +20,11 @@ multiversx-sc-snippets.workspace = true
 static_init.workspace = true
 base64.workspace = true
 
-contract = {path = "../bridge-contract"}
+contract = { path = "../bridge-contract" }
 
 anyhow = "1"
 serde_with = "3.3"
 
 reqwest = { version = "0.11", features = ["json"] }
 futures = "0.3.28"
+tower-http = { version = "0.4.4", features = ["cors"] }
