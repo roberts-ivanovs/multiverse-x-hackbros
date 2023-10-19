@@ -20,7 +20,7 @@ export const Header = () => {
   return (
     <header className='flex flex-row items-center justify-between px-12 pt-6 align-center'>
       <div className='flex gap-1 lg:gap-5'>
-        <MultiversXLogo className='w-[100px] h-6' />
+        <MultiversXLogo className='w-[100px] lg:w-full h-6' />
         <div className='h-full w-[1px] bg-gray-700' />
         <h1 className='font-bold text-transparent lg:text-lg bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text animate-text'>
           xChains
