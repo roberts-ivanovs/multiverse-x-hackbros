@@ -1,4 +1,4 @@
-import HeartIcon from 'assets/img/heart.svg?react';
+import HeartIcon from '@/assets/img/heart.svg?react';
 
 export const Footer = () => {
   return (

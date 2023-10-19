@@ -1,5 +1,4 @@
 import { MultiversexLogo } from '@/assets/gltf/multiversex';
-import { ContractAddress } from '@/components/ContractAddress';
 import {
   Dialog,
   DialogContent,
@@ -10,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { RouteNamesEnum } from '@/localConstants';
 import {
+  ExplorerLink,
   ExtensionLoginButton,
   ExtensionLoginButtonPropsType,
   LedgerLoginButton,
@@ -21,12 +21,13 @@ import {
   WebWalletLoginButton,
   WebWalletLoginButtonPropsType
 } from '@multiversx/sdk-dapp/UI';
+import { ACCOUNTS_ENDPOINT } from '@multiversx/sdk-dapp/apiCalls/endpoints';
 import { useGetIsLoggedIn } from '@multiversx/sdk-dapp/hooks/account/useGetIsLoggedIn';
 import { logout } from '@multiversx/sdk-dapp/utils/logout';
 import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
-import { nativeAuth } from 'config';
+import { contractAddress, nativeAuth } from 'config';
 import { PlugZap } from 'lucide-react';
 import { Suspense } from 'react';
 
@@ -74,7 +75,17 @@ export function MultiversXCard() {
           </EffectComposer>
         </Canvas>
       </div>
-      <ContractAddress />
+      <p className='mb-5 text-left truncate text-accent-10'>
+        <label className='block text-xs text-gray-500 uppercase'>
+          Contract
+        </label>
+        <ExplorerLink
+          page={`/${ACCOUNTS_ENDPOINT}/${contractAddress}`}
+          className='!ml-0 text-sm border-b border-gray-500 w-full border-dotted text-accent-100 hover:border-solid hover:border-gray-800'
+        >
+          {contractAddress}
+        </ExplorerLink>
+      </p>
       {isLoggedIn ? (
         <button
           onClick={handleLogout}

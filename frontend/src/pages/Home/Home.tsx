@@ -3,24 +3,59 @@ import { MultiversXCard } from '@/components/Card/MultiversXCard/multiversx-card
 import { OtherTokenCard } from '@/components/Card/OtherTokenCard/other-token-card';
 import { TransferCard } from '@/components/Card/TransferCard/transfer-card.component';
 import { useTransactionStore } from '@/stores/transaction.store';
+import { AnimatePresence, motion } from 'framer-motion';
 import { RepeatIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { PageWrapper } from 'wrappers';
+
+const chains = ['Cosmos', 'Ethereum', 'Solana', 'Binance'];
 
 export const Home = () => {
   const [isToMx, setIsToMx] = useTransactionStore((state) => [
     state.isToMx,
     state.setIsToMx
   ]);
+  const [animatedChainIdx, setAnimatedChainIdx] = useState(0);
+
+  useEffect(() => {
+    const animationInterval = setInterval(() => {
+      console.log('AAA');
+      setAnimatedChainIdx((prev) => {
+        if (prev + 1 >= chains.length) {
+          return 0;
+        } else {
+          return prev + 1;
+        }
+      });
+    }, 3000);
+
+    return () => {
+      clearInterval(animationInterval);
+    };
+  }, []);
 
   return (
     <PageWrapper>
-      <div className='flex flex-col items-center w-full h-full'>
-        <div className='self-start my-10'>
-          <h1 className='mb-10 text-5xl font-bold text-white'>
-            <span className='underline decoration-accent-100 decoration-dotted hover:decoration-solid'>
-              IBC protocol
-            </span>{' '}
-            for MultiversX
+      <div className='flex items-center w-full h-full'>
+        <div className='my-10 shrink-0 flex-2'>
+          <h1 className='z-10 mb-10 leading-[100px] font-bold text-white text-7xl font-urbanist'>
+            Your gateway to
+            <div className='relative'>
+              <span className='opacity-0'>_</span>
+              <AnimatePresence>
+                <motion.div
+                  key={animatedChainIdx}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -40 }}
+                  transition={{ duration: 0.5 }}
+                  className='absolute top-0 z-0 text-accent-100'
+                >
+                  {chains[animatedChainIdx]}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+            chain
           </h1>
           <p className='text-gray-400'>
             The{' '}
@@ -43,7 +78,7 @@ export const Home = () => {
             blockchain.
           </p>
         </div>
-        <div className='flex flex-col lg:flex-row my-auto self-start w-full gap-[24px] text-center sm:text-left font-medium'>
+        <div className='flex shrink-0 flex-10 flex-col my-auto lg:flex-row justify-center gap-[24px] text-center sm:text-left font-medium'>
           <Card
             icon={
               <div className='flex items-center justify-center w-8 h-8 text-sm font-bold text-white bg-gray-900 rounded-full'>

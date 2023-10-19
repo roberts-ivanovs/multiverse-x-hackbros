@@ -4,6 +4,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
+import { chains, useTransactionStore } from '@/stores/transaction.store';
 import { useGetIsLoggedIn } from '@multiversx/sdk-dapp/hooks/account/useGetIsLoggedIn';
 import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
@@ -11,14 +12,13 @@ import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { ChevronsUpDown } from 'lucide-react';
 import { Suspense, useState } from 'react';
 
-const chains = ['Ethereum (ETHEREUM)', 'Binance (BSC)'] as const;
-type Chain = (typeof chains)[number];
-
 export function OtherTokenCard() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedChain, setSelectedChain] = useState<Chain>(
-    'Ethereum (ETHEREUM)'
-  );
+
+  const [selectedChain, setSelectedChain] = useTransactionStore((state) => [
+    state.selectedChain,
+    state.setSelectedChain
+  ]);
   const isLoggedIn = useGetIsLoggedIn();
 
   return (
@@ -58,23 +58,27 @@ export function OtherTokenCard() {
             <PopoverTrigger asChild>
               <button
                 role='combobox'
-                className='flex justify-between w-full p-3 mb-4 text-sm text-white bg-gray-700 rounded-lg'
+                className='flex items-center justify-between w-full p-3 mb-4 text-sm text-white bg-gray-700 rounded-lg'
               >
-                {selectedChain}
+                <div className='flex items-center gap-2'>
+                  {selectedChain.icon}
+                  {selectedChain.name}
+                </div>
                 <ChevronsUpDown className='w-4 h-4 ml-2 opacity-50 shrink-0' />
               </button>
             </PopoverTrigger>
             <PopoverContent className='p-2 bg-gray-700 border-none rounded-lg w-fit'>
               {chains?.map((chain, i) => (
                 <div
-                  className='p-2 text-sm text-white rounded-lg hover:bg-white/[0.2] duration-150 cursor-pointer'
+                  className='p-2 text-sm flex items-center gap-2 text-white rounded-lg hover:bg-white/[0.2] duration-150 cursor-pointer'
                   key={i}
                   onClick={() => {
-                    setSelectedChain(chain);
+                    setSelectedChain(chain.name);
                     setIsDropdownOpen(false);
                   }}
                 >
-                  {chain}
+                  {chain.icon}
+                  {chain.name}
                 </div>
               ))}
             </PopoverContent>

@@ -1,3 +1,4 @@
+import MultiversXIcon from '@/assets/img/multiversx.svg?react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -12,12 +13,15 @@ import { useTransactionStore } from '@/stores/transaction.store';
 import { useGetAccountInfo } from '@multiversx/sdk-dapp/hooks/account/useGetAccountInfo';
 import { BigNumber } from 'bignumber.js';
 import { ChevronsUpDown } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function Transaction() {
   const [isTokenSelectOpen, setIsTokenSelectOpen] = useState(false);
   const [fromValue, setFromValue] = useState('');
-  const [isToMx] = useTransactionStore((state) => [state.isToMx]);
+  const [isToMx, selectedChain] = useTransactionStore((state) => [
+    state.isToMx,
+    state.selectedChain
+  ]);
 
   const formatNumberForUI = (numWithZeros: string, decimals: number) => {
     decimals = decimals - 5;
@@ -53,7 +57,7 @@ export default function Transaction() {
   }
 
   const gasFee = useMemo(
-    () => new BigNumber(fromValue).multipliedBy(0.01),
+    () => new BigNumber(fromValue || 0).multipliedBy(0.01),
     [fromValue]
   );
 
@@ -61,11 +65,16 @@ export default function Transaction() {
 
   const { data: tokens } = useAllTokens(address);
 
-  const [selectedTransferToken, setSelectedTransferToken] =
-    useState<string>('USDC-f46522');
+  const [selectedTokenId, setSelectedTokenId] = useState<string>('');
+
+  useEffect(() => {
+    if (!tokens) return;
+    setSelectedTokenId(tokens[0].mx_token_id);
+  }, [tokens]);
+
   const selectedToken = useMemo(
-    () => tokens?.find((token) => token.mx_token_id === selectedTransferToken),
-    [tokens, selectedTransferToken]
+    () => tokens?.find((token) => token.mx_token_id === selectedTokenId),
+    [tokens, selectedTokenId]
   );
 
   const { transferFromMx, transferToMx } = useTokenTransfer();
@@ -80,10 +89,16 @@ export default function Transaction() {
 
   return (
     <>
-      <p className='text-white'>{address}</p>
       <div>
         <div className='mb-5'>
-          <Label className='text-sm text-white/[0.3]'>You transfer from</Label>
+          <Label className='text-sm text-white/[0.3] flex items-center gap-2'>
+            You transfer from{' '}
+            {isToMx ? (
+              selectedChain.icon
+            ) : (
+              <MultiversXIcon className='w-6 h-6' />
+            )}
+          </Label>
           <div className='relative flex items-center my-1'>
             <Input
               placeholder='Amount'
@@ -101,9 +116,9 @@ export default function Transaction() {
                   role='combobox'
                   className='max-w-[120px] absolute right-1 text-xs justify-between flex p-2 bg-gray-700 text-white rounded-lg'
                 >
-                  {selectedTransferToken &&
+                  {selectedTokenId &&
                     tokens?.find(
-                      (token) => token.mx_token_id === selectedTransferToken
+                      (token) => token.mx_token_id === selectedTokenId
                     )?.name}
                   <ChevronsUpDown className='w-4 h-4 ml-2 opacity-50 shrink-0' />
                 </button>
@@ -114,7 +129,7 @@ export default function Transaction() {
                     className='p-2 text-xs text-white rounded-lg hover:bg-white/[0.2] duration-150 cursor-pointer'
                     key={i}
                     onClick={() => {
-                      setSelectedTransferToken(token.mx_token_id);
+                      setSelectedTokenId(token.mx_token_id);
                       setIsTokenSelectOpen(false);
                     }}
                   >
@@ -135,7 +150,14 @@ export default function Transaction() {
           )}
         </div>
         <div>
-          <Label className='text-sm text-white/[0.3]'>You receive on</Label>
+          <Label className='text-sm flex items-center gap-2 text-white/[0.3]'>
+            You receive on{' '}
+            {!isToMx ? (
+              selectedChain.icon
+            ) : (
+              <MultiversXIcon className='w-6 h-6' />
+            )}
+          </Label>
           <Input
             placeholder='Calculated amount'
             disabled={true}
