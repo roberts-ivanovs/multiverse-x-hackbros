@@ -1,3 +1,4 @@
+import Loader from '@/assets/img/loader.svg?react';
 import MultiversXIcon from '@/assets/img/multiversx.svg?react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -77,7 +78,7 @@ export default function Transaction() {
     [tokens, selectedTokenId]
   );
 
-  const { transferFromMx, transferToMx } = useTokenTransfer();
+  const { transferFromMx, transferToMx, isLoading } = useTokenTransfer();
 
   console.log(tokens);
   const tokensToSend = useMemo(
@@ -149,7 +150,7 @@ export default function Transaction() {
             </p>
           )}
         </div>
-        <div>
+        <div className='mb-5'>
           <Label className='text-sm flex items-center gap-2 text-white/[0.3]'>
             You receive on{' '}
             {!isToMx ? (
@@ -173,6 +174,7 @@ export default function Transaction() {
       </div>
       {selectedToken && (
         <button
+          disabled={isLoading}
           onClick={() => {
             if (isToMx) {
               transferToMx({
@@ -181,21 +183,24 @@ export default function Transaction() {
                   tokensToSend.toString(),
                   selectedToken.decimals
                 ).toString(),
-                token_id: selectedToken.mx_token_id
+                tokenId: selectedToken.mx_token_id
               });
             } else {
-              console.log('SENT TOKENS FROM MULTIVERSEX');
               sendTokenFromMx(
                 tokensToSend.toString(),
 
                 selectedToken.mx_token_id
               );
-              // transferFromMx({});
+              transferFromMx({
+                userAddress: address,
+                amount: tokensToSend.toString(),
+                tokenId: selectedToken.mx_token_id
+              });
             }
           }}
-          className='w-full py-2 text-sm font-bold text-white bg-gray-700 rounded-md'
+          className='flex items-center justify-center w-full py-2 text-sm font-bold text-white bg-gray-700 rounded-md'
         >
-          Confirm
+          {isLoading ? <Loader className='w-6 animate-spin' /> : 'Confirm'}
         </button>
       )}
     </>

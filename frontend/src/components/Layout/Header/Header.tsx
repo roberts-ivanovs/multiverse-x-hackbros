@@ -19,24 +19,25 @@ export const Header = () => {
 
   return (
     <header className='flex flex-row items-center justify-between px-12 pt-6 align-center'>
-      <div className='flex gap-5'>
-        <MultiversXLogo className='w-full h-6' />
+      <div className='flex gap-1 lg:gap-5'>
+        <MultiversXLogo className='w-[100px] h-6' />
         <div className='h-full w-[1px] bg-gray-700' />
-        <h1 className='text-lg font-bold text-transparent bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text animate-text'>
+        <h1 className='font-bold text-transparent lg:text-lg bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text animate-text'>
           xChains
         </h1>
       </div>
 
       <nav className='w-full h-full text-sm sm:relative sm:left-auto sm:top-auto sm:flex sm:w-auto sm:flex-row sm:justify-end sm:bg-transparent'>
-        <div className='container flex items-center justify-end gap-2 mx-auto'>
+        <div className='container flex items-center justify-end gap-2 p-0 lg:mx-auto'>
           {isLoggedIn && (
             <Popover
               open={walletPopoverOpen}
               onOpenChange={setIsWalletPopoverOpen}
             >
               <PopoverTrigger asChild>
-                <div className='flex items-center gap-2 p-2 px-4 mr-5 text-white duration-150 rounded-lg cursor-pointer hover:bg-gray-700'>
-                  <WalletIcon className='w-5' /> Wallet
+                <div className='flex items-center gap-2 p-2 px-4 text-white duration-150 rounded-lg cursor-pointer hover:bg-gray-700'>
+                  <WalletIcon className='w-5' />
+                  <span className='hidden lg:block'>Wallet</span>
                 </div>
               </PopoverTrigger>
               <PopoverContent className='p-2 bg-gray-700 border-none rounded-lg w-fit'>

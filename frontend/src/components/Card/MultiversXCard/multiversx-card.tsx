@@ -75,7 +75,7 @@ export function MultiversXCard() {
           </EffectComposer>
         </Canvas>
       </div>
-      <p className='mb-5 text-left truncate text-accent-10'>
+      <p className='mb-5 text-left max-w-[200px] lg:max-w-full truncate text-accent-10'>
         <label className='block text-xs text-gray-500 uppercase'>
           Contract
         </label>

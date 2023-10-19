@@ -36,9 +36,9 @@ export const Home = () => {
 
   return (
     <PageWrapper>
-      <div className='flex items-center w-full h-full'>
+      <div className='flex flex-col w-full h-full'>
         <div className='my-10 shrink-0 flex-2'>
-          <h1 className='z-10 mb-10 leading-[100px] font-bold text-white text-7xl font-urbanist'>
+          <h1 className='z-10 mb-10 text-5xl lg:leading-[100px] font-bold text-white lg:text-7xl font-urbanist'>
             Your gateway to
             <div className='relative'>
               <span className='opacity-0'>_</span>
@@ -52,6 +52,9 @@ export const Home = () => {
                   className='absolute top-0 z-0 text-accent-100'
                 >
                   {chains[animatedChainIdx]}
+                  <span className='absolute left-0 opacity-75 blur-xl'>
+                    {chains[animatedChainIdx]}
+                  </span>
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -78,7 +81,7 @@ export const Home = () => {
             blockchain.
           </p>
         </div>
-        <div className='flex shrink-0 flex-10 flex-col my-auto lg:flex-row justify-center gap-[24px] text-center sm:text-left font-medium'>
+        <div className='flex w-full flex-col my-auto lg:flex-row justify-center gap-[24px] text-center sm:text-left font-medium'>
           <Card
             icon={
               <div className='flex items-center justify-center w-8 h-8 text-sm font-bold text-white bg-gray-900 rounded-full'>
