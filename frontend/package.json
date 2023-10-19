@@ -33,6 +33,7 @@
     "react-dom": "18.2.0",
     "react-query": "^3.39.3",
     "react-router-dom": "6.16.0",
+    "react-toastify": "^9.1.3",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-animatecss": "^3.0.4",

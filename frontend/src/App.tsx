@@ -20,6 +20,8 @@ import {
 import { RouteNamesEnum } from 'localConstants';
 import { PageNotFound } from 'pages';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { routes } from 'routes';
 
 const queryClient = new QueryClient();
@@ -69,6 +71,7 @@ const AppContent = () => {
               <Route path='*' element={<PageNotFound />} />
             </Routes>
           </Layout>
+          <ToastContainer />
         </AxiosInterceptorContext.Listener>
       </QueryClientProvider>
     </DappProvider>
