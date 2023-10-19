@@ -14,6 +14,7 @@ import { useGetAccountInfo } from '@multiversx/sdk-dapp/hooks/account/useGetAcco
 import { BigNumber } from 'bignumber.js';
 import { ChevronsUpDown } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import axios, { AxiosResponse } from 'axios';
 
 export default function Transaction() {
   const [isTokenSelectOpen, setIsTokenSelectOpen] = useState(false);
@@ -37,6 +38,16 @@ export default function Transaction() {
     // const decimalPart = numStr.slice(-decimals);
 
     return `${integerPart}`;
+  };
+
+  const formatTokenBalanceForUI = (numWithZeros: string, decimals: number) => {
+    if (numWithZeros.length > 19) {
+      const decimalPart = numWithZeros.slice(-decimals).slice(0, 2);
+      const integerPart = numWithZeros.slice(0, -decimals);
+      return `${integerPart}.${decimalPart}`;
+    } else {
+      return '0.0';
+    }
   };
 
   function formatNumberForTx(formattedNum: string, decimals: number) {
@@ -142,7 +153,7 @@ export default function Transaction() {
           {selectedToken && (
             <p className='text-xs text-white'>
               <span className='text-white/[0.3]'>Balance: </span>
-              {`${formatNumberForUI(
+              {`${formatTokenBalanceForUI(
                 selectedToken.your_balance,
                 selectedToken.decimals
               )} ${selectedToken.name}`}
