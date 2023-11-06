@@ -8,4 +8,4 @@ publish = false
 version = "0.43.4"
 
 [dev-dependencies.multiversx-sc-scenario]
-version = "0.43.4"
+version = "0.44.0"
